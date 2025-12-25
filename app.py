@@ -1,14 +1,14 @@
-
 # =============================================================================
-# THE 80-MINUTE JOURNEY: STREAMLIT DASHBOARD
+# THE 80-MINUTE JOURNEY: STREAMLIT DASHBOARD (DARK MODE)
 # =============================================================================
 # Based on: endurance_analytics.ipynb
 # Author: Aditya Padmarajan
 # 
-# This app contains ONLY the 3 visualizations from the notebook:
-# 1. Marathon Progression Timeline
-# 2. Pace Evolution Curve
-# 3. Building the Base (Yearly Totals)
+# Dark Mode Color Palette:
+# - Background: Slate (#0F172A → #1E293B)
+# - Primary: Cyan/Teal (#22D3EE → #06B6D4)
+# - Accent: Amber (#FBBF24)
+# - Text: Light (#F8FAFC → #94A3B8)
 # =============================================================================
 
 import streamlit as st
@@ -26,16 +26,79 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DATA LOADING (Same as notebook Cell 4)
+# DARK MODE CSS
+# -----------------------------------------------------------------------------
+st.markdown("""
+<style>
+    /* Dark mode background */
+    .stApp {
+        background-color: #0F172A;
+    }
+    
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Headers */
+    h1, h2, h3 {
+        color: #F8FAFC !important;
+    }
+    
+    /* Paragraphs */
+    p, span, label {
+        color: #CBD5E1 !important;
+    }
+    
+    /* Dividers */
+    hr {
+        border-color: #334155 !important;
+    }
+    
+    /* Plotly chart container */
+    .stPlotlyChart {
+        background-color: transparent !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# -----------------------------------------------------------------------------
+# DARK MODE COLOR PALETTE
+# -----------------------------------------------------------------------------
+COLORS = {
+    # Backgrounds
+    'bg_dark': '#0F172A',
+    'bg_card': '#1E293B',
+    'bg_elevated': '#334155',
+    
+    # Primary gradient (cyan/teal - vibrant on dark)
+    'primary_gradient': ['#67E8F9', '#22D3EE', '#06B6D4', '#0891B2', '#0E7490', '#155E75'],
+    
+    # Accent (amber - warm contrast)
+    'accent': '#FBBF24',
+    'accent_light': '#FEF3C7',
+    'accent_dark': '#F59E0B',
+    'accent_bg': 'rgba(251, 191, 36, 0.15)',
+    
+    # Text
+    'text_bright': '#F8FAFC',
+    'text_primary': '#E2E8F0',
+    'text_secondary': '#94A3B8',
+    'text_muted': '#64748B',
+    
+    # Chart elements
+    'line': '#22D3EE',
+    'fill': 'rgba(34, 211, 238, 0.15)',
+    'grid': 'rgba(148, 163, 184, 0.15)',
+    'border': '#475569'
+}
+
+# -----------------------------------------------------------------------------
+# DATA LOADING
 # -----------------------------------------------------------------------------
 @st.cache_data
 def load_data():
     df = pd.read_csv("activities_dataset.csv")
-    
-    # Filter to running activities FIRST (same as notebook)
     df2 = df.query("`Activity Type` == 'Run'").reset_index(drop=True)
-    
-    # Rename columns (same as notebook)
     df2 = df2.rename(columns={
         "Distance": "Distance (km)",
         "Average Speed": "Avg Speed (m/s)",
@@ -49,37 +112,23 @@ def load_data():
         "Elevation High": "Elevation High (m)",
         "Elevation Low": "Elevation Low (m)"
     })
-    
     return df2
 
-# -----------------------------------------------------------------------------
-# PRE-PROCESSING (Same as notebook Cell 6)
-# -----------------------------------------------------------------------------
 @st.cache_data
 def preprocess_data(df2):
-    # Parse dates
     df2["Activity Date"] = pd.to_datetime(df2["Activity Date"], format="%b %d, %Y, %I:%M:%S %p")
-    
-    # Time-Based Columns for grouping
     df2["Year"] = df2["Activity Date"].dt.year
     df2["Month"] = df2["Activity Date"].dt.month
     df2["Week"] = df2["Activity Date"].dt.isocalendar().week
     df2["Day"] = df2["Activity Date"].dt.day_name()
-    
-    # Calculate pace
     df2["Pace (min/km)"] = 1000 / (df2["Avg Speed (m/s)"] * 60)
-    
-    # Formatted pace columns
     df2["Pace (min:sec/km)"] = df2["Pace (min/km)"].apply(
         lambda x: f"{int(x)}:{int((x % 1) * 60):02d}"
     )
-    
-    # Formatted Moving Time (seconds -> H:MM:SS)
     df2["Moving Time (H:M:S)"] = df2["Moving Time (s)"].apply(
         lambda x: f"{int(x // 3600)}:{int((x % 3600) // 60):02d}:{int(x % 60):02d}" if pd.notna(x) else None
     )
     
-    # Select columns
     cols_to_keep = [
         "Activity ID", "Activity Date", "Year", "Month", "Week", "Day",
         "Activity Name", "Activity Type", "Distance (km)", "Pace (min/km)",
@@ -88,40 +137,20 @@ def preprocess_data(df2):
     ]
     
     running_df = df2[[c for c in cols_to_keep if c in df2.columns]].reset_index(drop=True)
-    
-    # Extract Marathons
     marathon_df = running_df[running_df["Distance (km)"] > 40].reset_index(drop=True)
     
     return running_df, marathon_df
 
-# -----------------------------------------------------------------------------
-# MARATHON DATA (Same as notebook Cell 8)
-# -----------------------------------------------------------------------------
 @st.cache_data
 def get_marathon_data(marathon_df):
     marathon_df = marathon_df.copy()
-    
-    # Add race names
     marathon_df["Race"] = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
-    
-    # Official times (H:MM:SS format for display)
-    marathon_df["Official Time"] = [
-        "4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"
-    ]
-    
-    # Official times in seconds (for calculations/plotting)
+    marathon_df["Official Time"] = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]
     marathon_df["Official Time (s)"] = [
-        4*3600 + 46*60 + 7,
-        4*3600 + 25*60 + 48,
-        4*3600 + 16*60 + 58,
-        3*3600 + 47*60 + 47,
-        3*3600 + 37*60 + 23,
-        3*3600 + 26*60 + 0
+        4*3600 + 46*60 + 7, 4*3600 + 25*60 + 48, 4*3600 + 16*60 + 58,
+        3*3600 + 47*60 + 47, 3*3600 + 37*60 + 23, 3*3600 + 26*60 + 0
     ]
-    
-    # Official times in minutes (for plotting)
     marathon_df["Official Time (min)"] = marathon_df["Official Time (s)"] / 60
-    
     return marathon_df
 
 # -----------------------------------------------------------------------------
@@ -134,190 +163,322 @@ marathon_df = get_marathon_data(marathon_df_raw)
 # -----------------------------------------------------------------------------
 # HEADER
 # -----------------------------------------------------------------------------
-st.title("🏃 The 80-Minute Journey")
-st.markdown("*A Data-Driven Analysis of Marathon Progression (2022–2025)*")
-st.markdown("**Author:** Aditya Padmarajan | **Dataset:** Strava activity export")
+st.markdown(f"""
+<div style="text-align: center; padding: 2rem 0 2.5rem 0;">
+    <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; color: {COLORS['text_bright']}; font-weight: 700;">
+        🏃 The 80-Minute Journey
+    </h1>
+    <p style="font-size: 1.1rem; color: {COLORS['text_secondary']}; font-style: italic; margin-bottom: 0.5rem;">
+        A Data-Driven Analysis of Marathon Progression
+    </p>
+    <p style="font-size: 0.9rem; color: {COLORS['text_muted']};">
+        2022 – 2025 &nbsp;•&nbsp; Aditya Padmarajan &nbsp;•&nbsp; Strava Data
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# -----------------------------------------------------------------------------
-# VISUALIZATION 1: Marathon Progression Timeline (from notebook Cell 8)
-# -----------------------------------------------------------------------------
-st.header("The 80-Minute Journey")
-st.markdown("*Marathon progression from first race to personal best (2022–2025)*")
+# =============================================================================
+# VISUALIZATION 1: THE 80-MINUTE JOURNEY
+# =============================================================================
+
+st.markdown(f"""
+<h2 style="margin-bottom: 0.25rem; font-size: 1.5rem; color: {COLORS['text_bright']}; font-weight: 600;">
+    The 80-Minute Journey
+</h2>
+<p style="color: {COLORS['text_secondary']}; font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 1.5rem;">
+    Marathon finish times from first race to personal best
+</p>
+""", unsafe_allow_html=True)
 
 # Data
 races = marathon_df["Race"].tolist()
 times = marathon_df["Official Time (min)"].tolist()
 labels = marathon_df["Official Time"].tolist()
 
-# Colors (red → green gradient like notebook)
-colors = ['#d32f2f', '#f57c00', '#fbc02d', '#7cb342', '#43a047', '#2e7d32']
+# Cyan gradient (light → dark as times improve)
+marker_colors_1 = COLORS['primary_gradient']
 
 fig1 = go.Figure()
 
-# Green fill under the line
+# Soft glow fill
 fig1.add_trace(go.Scatter(
-    x=races, y=times,
-    fill='tozeroy',
-    fillcolor='rgba(46, 125, 50, 0.15)',
-    line=dict(color='#2E7D32', width=3),
-    mode='lines',
-    showlegend=False
+    x=races + races[::-1],
+    y=[max(times) + 10] * len(races) + times[::-1],
+    fill='toself',
+    fillcolor=COLORS['fill'],
+    line=dict(color='rgba(0,0,0,0)'),
+    showlegend=False,
+    hoverinfo='skip'
 ))
 
-# Markers with gradient colors
+# Main line (glowing effect)
 fig1.add_trace(go.Scatter(
     x=races, y=times,
-    mode='markers+text',
-    marker=dict(size=20, color=colors, line=dict(color='white', width=2)),
-    text=labels,
-    textposition="top center",
-    textfont=dict(size=11, color='#333'),
+    mode='lines',
+    line=dict(color=COLORS['line'], width=3),
     showlegend=False,
-    hovertemplate="<b>%{x}</b><br>Time: %{text}<extra></extra>"
+    hoverinfo='skip'
 ))
+
+# Gradient markers
+fig1.add_trace(go.Scatter(
+    x=races, y=times,
+    mode='markers',
+    marker=dict(
+        size=16,
+        color=marker_colors_1,
+        line=dict(color=COLORS['bg_dark'], width=2)
+    ),
+    showlegend=False,
+    hovertemplate="<b>%{x}</b><br>Finish Time: %{customdata}<extra></extra>",
+    customdata=labels
+))
+
+# Time labels (alternating positions)
+for i, (race, time, label) in enumerate(zip(races, times, labels)):
+    yshift = -22 if i % 2 == 0 else 22
+    
+    fig1.add_annotation(
+        x=race, y=time,
+        text=f"<b>{label}</b>",
+        showarrow=False,
+        yshift=yshift,
+        font=dict(size=10, color=COLORS['text_bright']),
+        bgcolor=COLORS['bg_card'],
+        bordercolor=COLORS['border'],
+        borderwidth=1,
+        borderpad=5
+    )
+
+# "80 min faster" badge
+fig1.add_annotation(
+    x=2.5, y=250,
+    text="<b>⚡ 80 min faster</b>",
+    showarrow=False,
+    font=dict(size=11, color=COLORS['accent']),
+    bgcolor=COLORS['accent_bg'],
+    bordercolor=COLORS['accent'],
+    borderwidth=1,
+    borderpad=8
+)
+
+# PB badge
+fig1.add_annotation(
+    x=5, y=times[-1],
+    text="<b>🏆 PB</b>",
+    showarrow=False,
+    yshift=-32,
+    font=dict(size=10, color=COLORS['bg_dark']),
+    bgcolor=COLORS['accent'],
+    borderpad=5
+)
 
 # Layout
 fig1.update_layout(
     yaxis=dict(
         autorange="reversed",
-        title="Finish Time (H:M:S)",
+        title=dict(text="<b>Finish Time</b>", font=dict(size=11, color=COLORS['text_secondary'])),
         tickvals=times,
         ticktext=labels,
-        tickfont=dict(size=11, color='#333')
+        tickfont=dict(size=10, color=COLORS['text_secondary']),
+        showgrid=True,
+        gridwidth=1,
+        gridcolor=COLORS['grid'],
+        zeroline=False,
+        showline=False
     ),
-    xaxis=dict(title="Race (42.2 km)", tickfont=dict(size=11, color='#333')),
-    height=500,
-    plot_bgcolor='rgba(0,0,0,0)',
-    paper_bgcolor='rgba(0,0,0,0)'
-)
-
-# Add gridlines
-fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.1)')
-
-# Add annotation for "80 min faster"
-fig1.add_annotation(
-    x=2.5, y=250,
-    text="<b>80 min faster</b>",
-    showarrow=False,
-    font=dict(size=12, color="#1976D2"),
-    bgcolor="#E3F2FD",
-    bordercolor="#1976D2",
-    borderwidth=1.5,
-    borderpad=6
-)
-
-# Add PB annotation
-fig1.add_annotation(
-    x=5.15, y=times[-1],
-    text="<b>PB</b>",
-    showarrow=False,
-    font=dict(size=12, color="#FFD700")
+    xaxis=dict(
+        title=dict(text="<b>Race</b>", font=dict(size=11, color=COLORS['text_secondary'])),
+        tickfont=dict(size=10, color=COLORS['text_secondary']),
+        showgrid=False,
+        zeroline=False,
+        showline=False
+    ),
+    height=480,
+    plot_bgcolor=COLORS['bg_dark'],
+    paper_bgcolor=COLORS['bg_dark'],
+    margin=dict(l=90, r=50, t=20, b=60),
+    hoverlabel=dict(
+        bgcolor=COLORS['bg_card'],
+        font_size=12,
+        font_family="Arial",
+        font_color=COLORS['text_bright'],
+        bordercolor=COLORS['border']
+    )
 )
 
 st.plotly_chart(fig1, use_container_width=True)
 
 st.markdown("---")
 
-# -----------------------------------------------------------------------------
-# VISUALIZATION 2: Pace Evolution Curve (from notebook Cell 10)
-# -----------------------------------------------------------------------------
-st.header("Pace Evolution Curve")
-st.markdown("*Marathon pace progression across six marathons (2022–2025)*")
+# =============================================================================
+# VISUALIZATION 2: PACE EVOLUTION
+# =============================================================================
+
+st.markdown(f"""
+<h2 style="margin-bottom: 0.25rem; font-size: 1.5rem; color: {COLORS['text_bright']}; font-weight: 600;">
+    Pace Evolution
+</h2>
+<p style="color: {COLORS['text_secondary']}; font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 1.5rem;">
+    Average pace progression across six marathons
+</p>
+""", unsafe_allow_html=True)
 
 # Data
 pace_to_plot = marathon_df["Pace (min/km)"].tolist()
 pace_labels = marathon_df["Pace (min:sec/km)"].tolist()
 
-# Blue gradient colors (like notebook)
-blue_colors = ['#bbdefb', '#90caf9', '#64b5f6', '#42a5f5', '#2196f3', '#1565c0']
-
 fig2 = go.Figure()
 
-# Blue fill under the curve
+# Soft glow fill
 fig2.add_trace(go.Scatter(
-    x=races, y=pace_to_plot,
-    fill='tozeroy',
-    fillcolor='rgba(21, 101, 192, 0.15)',
-    line=dict(color='#1565C0', width=3),
-    mode='lines',
-    showlegend=False
+    x=races + races[::-1],
+    y=[max(pace_to_plot) + 0.3] * len(races) + pace_to_plot[::-1],
+    fill='toself',
+    fillcolor=COLORS['fill'],
+    line=dict(color='rgba(0,0,0,0)'),
+    showlegend=False,
+    hoverinfo='skip'
 ))
 
-# Markers with blue gradient
+# Main line
 fig2.add_trace(go.Scatter(
     x=races, y=pace_to_plot,
-    mode='markers+text',
-    marker=dict(size=20, color=blue_colors, line=dict(color='white', width=2.5)),
-    text=[f"{p}/km" for p in pace_labels],
-    textposition="top center",
-    textfont=dict(size=11, color='#333'),
+    mode='lines',
+    line=dict(color=COLORS['line'], width=3),
     showlegend=False,
-    hovertemplate="<b>%{x}</b><br>Pace: %{text}<extra></extra>"
+    hoverinfo='skip'
 ))
+
+# Gradient markers
+fig2.add_trace(go.Scatter(
+    x=races, y=pace_to_plot,
+    mode='markers',
+    marker=dict(
+        size=16,
+        color=COLORS['primary_gradient'],
+        line=dict(color=COLORS['bg_dark'], width=2)
+    ),
+    showlegend=False,
+    hovertemplate="<b>%{x}</b><br>Pace: %{customdata}/km<extra></extra>",
+    customdata=pace_labels
+))
+
+# Pace labels (alternating)
+for i, (race, pace, label) in enumerate(zip(races, pace_to_plot, pace_labels)):
+    yshift = 22 if i % 2 == 0 else -22
+    
+    fig2.add_annotation(
+        x=race, y=pace,
+        text=f"<b>{label}/km</b>",
+        showarrow=False,
+        yshift=yshift,
+        font=dict(size=10, color=COLORS['text_bright']),
+        bgcolor=COLORS['bg_card'],
+        bordercolor=COLORS['border'],
+        borderwidth=1,
+        borderpad=5
+    )
+
+# Pace improvement badge
+pace_improvement = pace_to_plot[0] - pace_to_plot[-1]
+fig2.add_annotation(
+    x=2.5, y=5.5,
+    text=f"<b>⚡ {pace_improvement:.1f} min/km faster</b>",
+    showarrow=False,
+    font=dict(size=11, color=COLORS['accent']),
+    bgcolor=COLORS['accent_bg'],
+    bordercolor=COLORS['accent'],
+    borderwidth=1,
+    borderpad=8
+)
+
+# PB badge
+fig2.add_annotation(
+    x=5, y=pace_to_plot[-1],
+    text="<b>🏆 PB</b>",
+    showarrow=False,
+    yshift=32,
+    font=dict(size=10, color=COLORS['bg_dark']),
+    bgcolor=COLORS['accent'],
+    borderpad=5
+)
+
+# Corner badge
+fig2.add_annotation(
+    x=0.98, y=0.08,
+    xref="paper", yref="paper",
+    text="<b>6:30 → 4:50 /km</b>",
+    showarrow=False,
+    font=dict(size=10, color=COLORS['line']),
+    bgcolor=COLORS['bg_card'],
+    bordercolor=COLORS['border'],
+    borderwidth=1,
+    borderpad=6,
+    xanchor='right'
+)
 
 # Layout
 fig2.update_layout(
     yaxis=dict(
         autorange="reversed",
-        title="Marathon Pace (min:sec/km)",
+        title=dict(text="<b>Pace (min/km)</b>", font=dict(size=11, color=COLORS['text_secondary'])),
         tickvals=pace_to_plot,
         ticktext=pace_labels,
-        tickfont=dict(size=11, color='#333')
+        tickfont=dict(size=10, color=COLORS['text_secondary']),
+        showgrid=True,
+        gridwidth=1,
+        gridcolor=COLORS['grid'],
+        zeroline=False,
+        showline=False
     ),
-    xaxis=dict(title="Race (42.2 km)", tickfont=dict(size=11, color='#333')),
-    height=500,
-    plot_bgcolor='rgba(0,0,0,0)',
-    paper_bgcolor='rgba(0,0,0,0)'
-)
-
-# Add gridlines
-fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.1)')
-
-# Pace improvement annotation
-pace_improvement = pace_to_plot[0] - pace_to_plot[-1]
-fig2.add_annotation(
-    x=2.5, y=5.7,
-    text=f"<b>{pace_improvement:.1f} min/km faster</b>",
-    showarrow=False,
-    font=dict(size=12, color="#7B1FA2"),
-    bgcolor="#F3E5F5",
-    bordercolor="#7B1FA2",
-    borderwidth=1.5,
-    borderpad=6
-)
-
-# Start to end comparison
-fig2.add_annotation(
-    x=5, y=max(pace_to_plot) - 0.2,
-    text="<b>6:30/km → 4:50/km</b>",
-    showarrow=False,
-    font=dict(size=11, color="#1565C0"),
-    bgcolor="#E3F2FD",
-    bordercolor="#1565C0",
-    borderwidth=1.5,
-    borderpad=4
+    xaxis=dict(
+        title=dict(text="<b>Race</b>", font=dict(size=11, color=COLORS['text_secondary'])),
+        tickfont=dict(size=10, color=COLORS['text_secondary']),
+        showgrid=False,
+        zeroline=False,
+        showline=False
+    ),
+    height=480,
+    plot_bgcolor=COLORS['bg_dark'],
+    paper_bgcolor=COLORS['bg_dark'],
+    margin=dict(l=90, r=50, t=20, b=60),
+    hoverlabel=dict(
+        bgcolor=COLORS['bg_card'],
+        font_size=12,
+        font_family="Arial",
+        font_color=COLORS['text_bright'],
+        bordercolor=COLORS['border']
+    )
 )
 
 st.plotly_chart(fig2, use_container_width=True)
 
 st.markdown("---")
 
-# -----------------------------------------------------------------------------
-# VISUALIZATION 3: Building the Base (from notebook Cell 12)
-# -----------------------------------------------------------------------------
-st.header("Building the Base")
-st.markdown("*Total running distance per year*")
+# =============================================================================
+# VISUALIZATION 3: BUILDING THE BASE
+# =============================================================================
 
-# Data (same as notebook)
+st.markdown(f"""
+<h2 style="margin-bottom: 0.25rem; font-size: 1.5rem; color: {COLORS['text_bright']}; font-weight: 600;">
+    Building the Base
+</h2>
+<p style="color: {COLORS['text_secondary']}; font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 1.5rem;">
+    Total running distance per year
+</p>
+""", unsafe_allow_html=True)
+
+# Data
 cumulative_distance_year_df = running_df.groupby("Year")["Distance (km)"].sum().reset_index()
 years = cumulative_distance_year_df["Year"].astype(int).tolist()
 year_distance = cumulative_distance_year_df["Distance (km)"].tolist()
 runs_per_year = running_df.groupby("Year").size().tolist()
 
-# Green gradient colors (like notebook)
-green_colors = ['#a5d6a7', '#66bb6a', '#43a047', '#2e7d32']
+# Cyan gradient for bars
+bar_colors = ['#67E8F9', '#22D3EE', '#06B6D4', '#0891B2']
 
 fig3 = go.Figure()
 
@@ -325,72 +486,93 @@ fig3 = go.Figure()
 fig3.add_trace(go.Bar(
     x=years,
     y=year_distance,
-    marker_color=green_colors,
-    marker_line=dict(color='white', width=2.5),
-    width=0.65,
-    text=[f"{d:,.0f} Km" for d in year_distance],
-    textposition='outside',
-    textfont=dict(size=14, color='#333'),
+    marker_color=bar_colors,
+    marker_line=dict(color=COLORS['bg_dark'], width=2),
+    width=0.55,
     hovertemplate="<b>%{x}</b><br>Distance: %{y:,.0f} km<extra></extra>"
 ))
 
-# Add run count as annotation inside bars
+# Distance labels on top
+for i, (year, dist) in enumerate(zip(years, year_distance)):
+    fig3.add_annotation(
+        x=year, y=dist + 35,
+        text=f"<b>{dist:,.0f} km</b>",
+        showarrow=False,
+        font=dict(size=12, color=COLORS['text_bright']),
+        yanchor='bottom'
+    )
+
+# Run count inside bars
 for i, (year, dist, runs) in enumerate(zip(years, year_distance, runs_per_year)):
     fig3.add_annotation(
-        x=year, y=dist/2,
+        x=year, y=dist / 2,
         text=f"<b>{runs} runs</b>",
         showarrow=False,
-        font=dict(size=12, color='white')
+        font=dict(size=10, color=COLORS['bg_dark'])
     )
+
+# Growth badge
+growth = year_distance[-1] / year_distance[0]
+fig3.add_annotation(
+    x=2023.5, y=max(year_distance) * 1.15,
+    text=f"<b>📈 {growth:.0f}x volume growth</b>",
+    showarrow=False,
+    font=dict(size=12, color=COLORS['accent']),
+    bgcolor=COLORS['accent_bg'],
+    bordercolor=COLORS['accent'],
+    borderwidth=1,
+    borderpad=8
+)
+
+# Total badge
+total_km = sum(year_distance)
+fig3.add_annotation(
+    x=0.98, y=0.96,
+    xref="paper", yref="paper",
+    text=f"<b>Total: {total_km:,.0f} km</b>",
+    showarrow=False,
+    font=dict(size=11, color=COLORS['line']),
+    bgcolor=COLORS['bg_card'],
+    bordercolor=COLORS['border'],
+    borderwidth=1,
+    borderpad=8,
+    xanchor='right', yanchor='top'
+)
 
 # Layout
 fig3.update_layout(
     yaxis=dict(
-        title="Cumulative Distance (Km)",
-        range=[0, max(year_distance) * 1.35],
-        tickfont=dict(size=11, color='#333')
+        title=dict(text="<b>Distance (km)</b>", font=dict(size=11, color=COLORS['text_secondary'])),
+        range=[0, max(year_distance) * 1.30],
+        tickfont=dict(size=10, color=COLORS['text_secondary']),
+        showgrid=True,
+        gridwidth=1,
+        gridcolor=COLORS['grid'],
+        zeroline=False,
+        showline=False
     ),
     xaxis=dict(
-        title="Year",
+        title=dict(text="<b>Year</b>", font=dict(size=11, color=COLORS['text_secondary'])),
         tickmode='array',
         tickvals=years,
         ticktext=[str(y) for y in years],
-        tickfont=dict(size=13, color='#333')
+        tickfont=dict(size=11, color=COLORS['text_secondary']),
+        showgrid=False,
+        zeroline=False,
+        showline=False
     ),
-    height=500,
-    plot_bgcolor='rgba(0,0,0,0)',
-    paper_bgcolor='rgba(0,0,0,0)'
-)
-
-# Add gridlines
-fig3.update_yaxes(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.1)')
-
-# Growth annotation
-growth = year_distance[-1] / year_distance[0]
-fig3.add_annotation(
-    x=2023.5,
-    y=(year_distance[0] + 250 + year_distance[-1] + 250) / 2 + 50,
-    text=f"<b>{growth:.0f}x growth</b>",
-    showarrow=False,
-    font=dict(size=13, color="#2E7D32"),
-    bgcolor="#E8F5E9",
-    bordercolor="#2E7D32",
-    borderwidth=1.5,
-    borderpad=6
-)
-
-# Total km annotation
-total_km = sum(year_distance)
-fig3.add_annotation(
-    x=0.97, y=0.95,
-    xref="paper", yref="paper",
-    text=f"<b>Total: {total_km:,.0f} km</b>",
-    showarrow=False,
-    font=dict(size=14, color="#2E7D32"),
-    bgcolor="#E8F5E9",
-    bordercolor="#2E7D32",
-    borderwidth=2,
-    borderpad=8
+    height=480,
+    plot_bgcolor=COLORS['bg_dark'],
+    paper_bgcolor=COLORS['bg_dark'],
+    margin=dict(l=70, r=50, t=20, b=60),
+    hoverlabel=dict(
+        bgcolor=COLORS['bg_card'],
+        font_size=12,
+        font_family="Arial",
+        font_color=COLORS['text_bright'],
+        bordercolor=COLORS['border']
+    ),
+    bargap=0.3
 )
 
 st.plotly_chart(fig3, use_container_width=True)
@@ -399,9 +581,13 @@ st.plotly_chart(fig3, use_container_width=True)
 # FOOTER
 # -----------------------------------------------------------------------------
 st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: #666;'>"
-    "Built with Streamlit • Data from Strava • The 80-Minute Journey"
-    "</div>",
-    unsafe_allow_html=True
-)
+st.markdown(f"""
+<div style="text-align: center; padding: 1.5rem 0 2rem 0;">
+    <p style="margin: 0; font-size: 0.85rem; color: {COLORS['text_muted']};">
+        Built with Streamlit &nbsp;•&nbsp; Data from Strava
+    </p>
+    <p style="margin: 0.3rem 0 0 0; font-size: 0.8rem; color: {COLORS['text_muted']};">
+        The 80-Minute Journey: A Data-Driven Analysis of Marathon Progression
+    </p>
+</div>
+""", unsafe_allow_html=True)
