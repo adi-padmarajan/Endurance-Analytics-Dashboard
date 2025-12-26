@@ -37,3 +37,20 @@ with st.expander("Show activities_dataset.csv"):
 with st.expander("Show global_challenges.csv"):
 	st.dataframe(challenges_df)
 
+st.markdown(
+"""
+
+### Marathon Race Summary (Official Times)
+
+| Race | Date | Finish Time | Pace |
+|------|------|-------------|------|
+| Royal Victoria Marathon 2022 | Oct 9, 2022 | 4:46:07 | 6:30/km |
+| BMO Vancouver Marathon 2023 | May 7, 2023 | 4:25:48 | 6:13/km |
+| Royal Victoria Marathon 2023 | Oct 8, 2023 | 4:16:58 | 6:04/km |
+| Royal Victoria Marathon 2024 | Oct 13, 2024 | 3:47:47 | 5:22/km |
+| BMO Vancouver Marathon 2025 | May 4, 2025 | 3:37:23 | 5:07/km |
+| Royal Victoria Marathon 2025 | Oct 12, 2025 | 3:26:00 | 4:50/km |
+
+"""
+)
+
