@@ -10,43 +10,42 @@ st.subheader("A Data-Driven Analysis of Marathon Progression (2022 – 2025)")
 activities_df = pd.read_csv("activities_dataset.csv")
 challenges_df = pd.read_csv("global_challenges.csv")
 
-st.markdown(
-"""
-### Project Overview
-This dashboard analyzes **347 running activities over 3.5 years**, documenting the progression from a first-time marathoner (4:46:07 at Royal Victoria Marathon 2022) to a sub-3:30 finisher (3:26:00 at Royal Victoria Marathon 2025) — an improvement of **80 minutes** across 6 marathon races.
-The analysis explores how training patterns, physiological adaptations, and race execution evolved to produce consistent performance gains at two recurring races: the **Royal Victoria Marathon** (4 finishes) and **BMO Vancouver Marathon** (2 finishes).
-"""
-)
+with st.expander("### Project Overview", expanded = False):
+	st.markdown(
+	"""
+	This dashboard analyzes **347 running activities over 3.5 years**, documenting the progression from a first-time marathoner (4:46:07 at Royal Victoria Marathon 2022) to a sub-3:30 finisher (3:26:00 at Royal Victoria Marathon 2025) — an improvement of **80 minutes** across 6 marathon races.
+	The analysis explores how training patterns, physiological adaptations, and race execution evolved to produce consistent performance gains at two recurring races: the **Royal Victoria Marathon** (4 finishes) and **BMO Vancouver Marathon** (2 finishes).
+	"""
+	)
 
-st.markdown(
-""" ### Datasets 
-The dataset is sourced from a complete Strava activity export containing 449 total activities. For this analysis, we filter exclusively to **running activities (347 runs)** spanning February 2022 to October 2025.
+with st.expander("### Datasets", expanded = False):
+	st.markdown(
+	"""
+	The dataset is sourced from a complete Strava activity export containing 449 total activities. For this analysis, we filter exclusively to **running activities (347 runs)** spanning February 2022 to October 2025.
 
-**Key columns extracted:**
-- **Activity metadata:** ID, Date, Name, Type
-- **Performance metrics:** Distance, Speed, Pace, Moving Time
-- **Physiological data:** Heart Rate (average/max)
-- **Terrain data:** Elevation Gain/Loss, High/Low points
-- **Effort indicators:** Calories, Relative Effort
+	**Key columns extracted:**
+	- **Activity metadata:** ID, Date, Name, Type
+	- **Performance metrics:** Distance, Speed, Pace, Moving Time
+	- **Physiological data:** Heart Rate (average/max)
+	- **Terrain data:** Elevation Gain/Loss, High/Low points
+	- **Effort indicators:** Calories, Relative Effort
 
-*Note: Heart rate data is unavailable for the first 20 runs (Feb–Jun 2022) due to the absence of a heart rate monitor during that period.*
-""")
+	*Note: Heart rate data is unavailable for the first 20 runs (Feb–Jun 2022) due to the absence of a heart rate monitor during that period.*
+	""")
 
-st.markdown(
-"""
+with st.expander("# Marathons Race Summary and Official Times", expanded = False):
+	st.markdown(
+	"""
+	| Race | Date | Finish Time | Pace |
+	|------|------|-------------|------|
+	| Royal Victoria Marathon 2022 | Oct 9, 2022 | 4:46:07 | 6:30/km |
+	| BMO Vancouver Marathon 2023 | May 7, 2023 | 4:25:48 | 6:13/km |
+	| Royal Victoria Marathon 2023 | Oct 8, 2023 | 4:16:58 | 6:04/km |
+	| Royal Victoria Marathon 2024 | Oct 13, 2024 | 3:47:47 | 5:22/km |
+	| BMO Vancouver Marathon 2025 | May 4, 2025 | 3:37:23 | 5:07/km |
+	| Royal Victoria Marathon 2025 | Oct 12, 2025 | 3:26:00 | 4:50/km |
 
-### Marathon Race Summary (Official Times)
-
-| Race | Date | Finish Time | Pace |
-|------|------|-------------|------|
-| Royal Victoria Marathon 2022 | Oct 9, 2022 | 4:46:07 | 6:30/km |
-| BMO Vancouver Marathon 2023 | May 7, 2023 | 4:25:48 | 6:13/km |
-| Royal Victoria Marathon 2023 | Oct 8, 2023 | 4:16:58 | 6:04/km |
-| Royal Victoria Marathon 2024 | Oct 13, 2024 | 3:47:47 | 5:22/km |
-| BMO Vancouver Marathon 2025 | May 4, 2025 | 3:37:23 | 5:07/km |
-| Royal Victoria Marathon 2025 | Oct 12, 2025 | 3:26:00 | 4:50/km |
-
-"""
+	"""
 )
 
 st.markdown("### Marathon Progression Timeline")
