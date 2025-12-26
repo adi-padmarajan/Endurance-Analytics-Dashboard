@@ -31,12 +31,6 @@ The dataset is sourced from a complete Strava activity export containing 449 tot
 *Note: Heart rate data is unavailable for the first 20 runs (Feb–Jun 2022) due to the absence of a heart rate monitor during that period.*
 """)
 
-with st.expander("Show activities_dataset.csv"):
-	st.dataframe(activities_df)
-
-with st.expander("Show global_challenges.csv"):
-	st.dataframe(challenges_df)
-
 st.markdown(
 """
 
