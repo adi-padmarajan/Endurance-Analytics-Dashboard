@@ -1,14 +1,5 @@
 # =============================================================================
-# THE 80-MINUTE JOURNEY: STREAMLIT DASHBOARD (DARK MODE)
-# =============================================================================
-# Based on: endurance_analytics.ipynb
-# Author: Aditya Padmarajan
-# 
-# Dark Mode Color Palette:
-# - Background: Slate (#0F172A → #1E293B)
-# - Primary: Cyan/Teal (#22D3EE → #06B6D4)
-# - Accent: Amber (#FBBF24)
-# - Text: Light (#F8FAFC → #94A3B8)
+# THE 80-MINUTE JOURNEY: STREAMLIT DASHBOARD
 # =============================================================================
 
 import streamlit as st
@@ -17,78 +8,92 @@ import numpy as np
 import plotly.graph_objects as go
 
 # -----------------------------------------------------------------------------
-# PAGE CONFIGURATION
+# PAGE CONFIG
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="The 80-Minute Journey",
     page_icon="🏃",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # -----------------------------------------------------------------------------
-# DARK MODE CSS
+# CSS STYLING
 # -----------------------------------------------------------------------------
 st.markdown("""
 <style>
-    /* Dark mode background */
+    /* Dark background */
     .stApp {
-        background-color: #0F172A;
+        background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
     }
     
     /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    #MainMenu, footer, header {visibility: hidden;}
+    .stDeployButton {display: none;}
     
-    /* Headers */
-    h1, h2, h3 {
-        color: #F8FAFC !important;
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%) !important;
+        border-right: 1px solid #334155;
     }
     
-    /* Paragraphs */
-    p, span, label {
-        color: #CBD5E1 !important;
+    [data-testid="stSidebar"] > div:first-child {
+        padding-top: 0;
+    }
+    
+    /* Text colors */
+    h1, h2, h3 { color: #F8FAFC !important; }
+    p, span, label { color: #CBD5E1 !important; }
+    
+    /* Metric styling */
+    [data-testid="stMetricValue"] {
+        color: #22D3EE !important;
+        font-size: 1.75rem !important;
+        font-weight: 700 !important;
+    }
+    [data-testid="stMetricLabel"] { color: #94A3B8 !important; }
+    [data-testid="stMetricDelta"] { color: #FBBF24 !important; }
+    
+    [data-testid="metric-container"] {
+        background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+        border: 1px solid #475569;
+        border-radius: 16px;
+        padding: 1rem;
     }
     
     /* Dividers */
-    hr {
-        border-color: #334155 !important;
-    }
+    hr { border-color: #334155 !important; }
     
-    /* Plotly chart container */
-    .stPlotlyChart {
-        background-color: transparent !important;
+    /* Radio buttons in sidebar */
+    [data-testid="stSidebar"] .stRadio > div > label {
+        background: transparent;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin: 2px 0;
+        transition: all 0.2s;
+    }
+    [data-testid="stSidebar"] .stRadio > div > label:hover {
+        background: rgba(34, 211, 238, 0.1);
     }
 </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# DARK MODE COLOR PALETTE
+# COLORS
 # -----------------------------------------------------------------------------
 COLORS = {
-    # Backgrounds
     'bg_dark': '#0F172A',
     'bg_card': '#1E293B',
     'bg_elevated': '#334155',
-    
-    # Primary gradient (cyan/teal - vibrant on dark)
     'primary_gradient': ['#67E8F9', '#22D3EE', '#06B6D4', '#0891B2', '#0E7490', '#155E75'],
-    
-    # Accent (amber - warm contrast)
     'accent': '#FBBF24',
-    'accent_light': '#FEF3C7',
-    'accent_dark': '#F59E0B',
     'accent_bg': 'rgba(251, 191, 36, 0.15)',
-    
-    # Text
     'text_bright': '#F8FAFC',
-    'text_primary': '#E2E8F0',
     'text_secondary': '#94A3B8',
     'text_muted': '#64748B',
-    
-    # Chart elements
     'line': '#22D3EE',
-    'fill': 'rgba(34, 211, 238, 0.15)',
-    'grid': 'rgba(148, 163, 184, 0.15)',
+    'fill': 'rgba(34, 211, 238, 0.12)',
+    'grid': 'rgba(148, 163, 184, 0.12)',
     'border': '#475569'
 }
 
@@ -102,15 +107,7 @@ def load_data():
     df2 = df2.rename(columns={
         "Distance": "Distance (km)",
         "Average Speed": "Avg Speed (m/s)",
-        "Max Speed": "Max Speed (m/s)",
         "Moving Time": "Moving Time (s)",
-        "Elapsed Time": "Elapsed Time (s)",
-        "Average Heart Rate": "Avg HR (bpm)",
-        "Max Heart Rate": "Max HR (bpm)",
-        "Elevation Gain": "Elevation Gain (m)",
-        "Elevation Loss": "Elevation Loss (m)",
-        "Elevation High": "Elevation High (m)",
-        "Elevation Low": "Elevation Low (m)"
     })
     return df2
 
@@ -118,27 +115,12 @@ def load_data():
 def preprocess_data(df2):
     df2["Activity Date"] = pd.to_datetime(df2["Activity Date"], format="%b %d, %Y, %I:%M:%S %p")
     df2["Year"] = df2["Activity Date"].dt.year
-    df2["Month"] = df2["Activity Date"].dt.month
-    df2["Week"] = df2["Activity Date"].dt.isocalendar().week
-    df2["Day"] = df2["Activity Date"].dt.day_name()
     df2["Pace (min/km)"] = 1000 / (df2["Avg Speed (m/s)"] * 60)
-    df2["Pace (min:sec/km)"] = df2["Pace (min/km)"].apply(
-        lambda x: f"{int(x)}:{int((x % 1) * 60):02d}"
-    )
-    df2["Moving Time (H:M:S)"] = df2["Moving Time (s)"].apply(
-        lambda x: f"{int(x // 3600)}:{int((x % 3600) // 60):02d}:{int(x % 60):02d}" if pd.notna(x) else None
-    )
+    df2["Pace (min:sec/km)"] = df2["Pace (min/km)"].apply(lambda x: f"{int(x)}:{int((x % 1) * 60):02d}")
     
-    cols_to_keep = [
-        "Activity ID", "Activity Date", "Year", "Month", "Week", "Day",
-        "Activity Name", "Activity Type", "Distance (km)", "Pace (min/km)",
-        "Pace (min:sec/km)", "Moving Time (s)", "Moving Time (H:M:S)",
-        "Avg HR (bpm)", "Max HR (bpm)", "Elevation Gain (m)", "Calories"
-    ]
-    
-    running_df = df2[[c for c in cols_to_keep if c in df2.columns]].reset_index(drop=True)
+    cols = ["Activity Date", "Year", "Distance (km)", "Pace (min/km)", "Pace (min:sec/km)", "Moving Time (s)"]
+    running_df = df2[[c for c in cols if c in df2.columns]].reset_index(drop=True)
     marathon_df = running_df[running_df["Distance (km)"] > 40].reset_index(drop=True)
-    
     return running_df, marathon_df
 
 @st.cache_data
@@ -146,448 +128,363 @@ def get_marathon_data(marathon_df):
     marathon_df = marathon_df.copy()
     marathon_df["Race"] = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
     marathon_df["Official Time"] = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]
-    marathon_df["Official Time (s)"] = [
-        4*3600 + 46*60 + 7, 4*3600 + 25*60 + 48, 4*3600 + 16*60 + 58,
-        3*3600 + 47*60 + 47, 3*3600 + 37*60 + 23, 3*3600 + 26*60 + 0
-    ]
+    marathon_df["Official Time (s)"] = [17167, 15948, 15418, 13667, 13043, 12360]
     marathon_df["Official Time (min)"] = marathon_df["Official Time (s)"] / 60
     return marathon_df
 
-# -----------------------------------------------------------------------------
-# LOAD DATA
-# -----------------------------------------------------------------------------
+# Load data
 df2 = load_data()
 running_df, marathon_df_raw = preprocess_data(df2)
 marathon_df = get_marathon_data(marathon_df_raw)
 
+# Metrics
+total_distance = running_df["Distance (km)"].sum()
+total_runs = len(running_df)
+total_marathons = len(marathon_df)
+
 # -----------------------------------------------------------------------------
-# HEADER
+# SIDEBAR
+# -----------------------------------------------------------------------------
+with st.sidebar:
+    # Header
+    st.markdown(f"""
+    <div style="text-align: center; padding: 1.5rem 0; border-bottom: 1px solid {COLORS['border']}; margin-bottom: 1rem;">
+        <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🏃</div>
+        <h2 style="color: {COLORS['text_bright']}; font-size: 1.2rem; margin: 0; font-weight: 700;">
+            The 80-Minute Journey
+        </h2>
+        <p style="color: {COLORS['text_muted']}; font-size: 0.75rem; margin-top: 0.5rem;">
+            Marathon Analytics Dashboard
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Navigation label
+    st.markdown(f"""
+    <p style="color: {COLORS['text_muted']}; font-size: 0.7rem; text-transform: uppercase; 
+       letter-spacing: 0.1em; margin-bottom: 0.5rem; font-weight: 600;">
+        📍 Navigation
+    </p>
+    """, unsafe_allow_html=True)
+    
+    # Navigation
+    page = st.radio(
+        "Navigation",
+        ["🏠 Overview", "🏃 Race Times", "⚡ Pace Analysis", "📈 Training Volume"],
+        label_visibility="collapsed"
+    )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Quick Stats
+    st.markdown(f"""
+    <div style="background: {COLORS['bg_elevated']}; border-radius: 12px; padding: 1rem; 
+         border: 1px solid {COLORS['border']}; margin-top: 1rem;">
+        <p style="color: {COLORS['text_muted']}; font-size: 0.7rem; text-transform: uppercase; 
+           letter-spacing: 0.1em; margin-bottom: 0.75rem; font-weight: 600;">
+            📊 Quick Stats
+        </p>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Distance</span>
+            <span style="color: {COLORS['line']}; font-weight: 700;">{total_distance:,.0f} km</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Runs</span>
+            <span style="color: {COLORS['line']}; font-weight: 700;">{total_runs}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Marathons</span>
+            <span style="color: {COLORS['accent']}; font-weight: 700;">{total_marathons}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+            <span style="color: {COLORS['text_secondary']}; font-size: 0.85rem;">Best Time</span>
+            <span style="color: {COLORS['accent']}; font-weight: 700;">3:26:00</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Footer
+    st.markdown(f"""
+    <div style="position: fixed; bottom: 0; left: 0; width: inherit; padding: 1rem; 
+         border-top: 1px solid {COLORS['border']}; background: {COLORS['bg_dark']}; text-align: center;">
+        <p style="color: {COLORS['text_muted']}; font-size: 0.7rem; margin: 0;">
+            Built by <span style="color: {COLORS['line']};">Aditya Padmarajan</span>
+        </p>
+        <p style="color: {COLORS['text_muted']}; font-size: 0.65rem; margin-top: 0.25rem;">
+            Data from Strava
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# -----------------------------------------------------------------------------
+# MAIN HEADER
 # -----------------------------------------------------------------------------
 st.markdown(f"""
-<div style="text-align: center; padding: 2rem 0 2.5rem 0;">
-    <h1 style="font-size: 2.8rem; margin-bottom: 0.5rem; color: {COLORS['text_bright']}; font-weight: 700;">
-        🏃 The 80-Minute Journey
-    </h1>
-    <p style="font-size: 1.1rem; color: {COLORS['text_secondary']}; font-style: italic; margin-bottom: 0.5rem;">
-        A Data-Driven Analysis of Marathon Progression
-    </p>
-    <p style="font-size: 0.9rem; color: {COLORS['text_muted']};">
-        2022 – 2025 &nbsp;•&nbsp; Aditya Padmarajan &nbsp;•&nbsp; Strava Data
-    </p>
+<div style="background: linear-gradient(135deg, {COLORS['bg_card']} 0%, {COLORS['bg_elevated']} 50%, {COLORS['bg_card']} 100%);
+     border-radius: 20px; padding: 1.5rem 2rem; margin-bottom: 1.5rem; border: 1px solid {COLORS['border']};">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span style="font-size: 2.5rem;">🏃</span>
+        <div>
+            <h1 style="color: {COLORS['text_bright']}; font-size: 1.8rem; font-weight: 700; margin: 0;">
+                The 80-Minute Journey
+            </h1>
+            <p style="color: {COLORS['text_secondary']}; font-size: 0.95rem; margin: 0.25rem 0 0 0;">
+                A Data-Driven Analysis of Marathon Progression
+            </p>
+        </div>
+    </div>
+    <div style="display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap;">
+        <span style="color: {COLORS['text_muted']}; font-size: 0.85rem;">📅 2022 – 2025</span>
+        <span style="color: {COLORS['text_muted']}; font-size: 0.85rem;">👤 Aditya Padmarajan</span>
+        <span style="color: {COLORS['accent']}; font-size: 0.85rem;">🏆 PB: 3:26:00</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("---")
-
 # =============================================================================
-# VISUALIZATION 1: THE 80-MINUTE JOURNEY
+# PAGE: OVERVIEW
 # =============================================================================
-
-st.markdown(f"""
-<h2 style="margin-bottom: 0.25rem; font-size: 1.5rem; color: {COLORS['text_bright']}; font-weight: 600;">
-    The 80-Minute Journey
-</h2>
-<p style="color: {COLORS['text_secondary']}; font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 1.5rem;">
-    Marathon finish times from first race to personal best
-</p>
-""", unsafe_allow_html=True)
-
-# Data
-races = marathon_df["Race"].tolist()
-times = marathon_df["Official Time (min)"].tolist()
-labels = marathon_df["Official Time"].tolist()
-
-# Cyan gradient (light → dark as times improve)
-marker_colors_1 = COLORS['primary_gradient']
-
-fig1 = go.Figure()
-
-# Soft glow fill
-fig1.add_trace(go.Scatter(
-    x=races + races[::-1],
-    y=[max(times) + 10] * len(races) + times[::-1],
-    fill='toself',
-    fillcolor=COLORS['fill'],
-    line=dict(color='rgba(0,0,0,0)'),
-    showlegend=False,
-    hoverinfo='skip'
-))
-
-# Main line (glowing effect)
-fig1.add_trace(go.Scatter(
-    x=races, y=times,
-    mode='lines',
-    line=dict(color=COLORS['line'], width=3),
-    showlegend=False,
-    hoverinfo='skip'
-))
-
-# Gradient markers
-fig1.add_trace(go.Scatter(
-    x=races, y=times,
-    mode='markers',
-    marker=dict(
-        size=16,
-        color=marker_colors_1,
-        line=dict(color=COLORS['bg_dark'], width=2)
-    ),
-    showlegend=False,
-    hovertemplate="<b>%{x}</b><br>Finish Time: %{customdata}<extra></extra>",
-    customdata=labels
-))
-
-# Time labels (alternating positions)
-for i, (race, time, label) in enumerate(zip(races, times, labels)):
-    yshift = -22 if i % 2 == 0 else 22
+if page == "🏠 Overview":
+    # Metrics
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("🛣️ Total Distance", f"{total_distance:,.0f} km", f"{total_runs} runs")
+    with col2:
+        st.metric("🏅 Marathons", "6", "All Finished")
+    with col3:
+        st.metric("⏱️ Improved", "80 min", "4:46 → 3:26")
+    with col4:
+        st.metric("🏆 Personal Best", "3:26:00", "Oct 2025")
     
-    fig1.add_annotation(
-        x=race, y=time,
-        text=f"<b>{label}</b>",
-        showarrow=False,
-        yshift=yshift,
-        font=dict(size=10, color=COLORS['text_bright']),
-        bgcolor=COLORS['bg_card'],
-        bordercolor=COLORS['border'],
-        borderwidth=1,
-        borderpad=5
-    )
-
-# "80 min faster" badge
-fig1.add_annotation(
-    x=2.5, y=250,
-    text="<b>⚡ 80 min faster</b>",
-    showarrow=False,
-    font=dict(size=11, color=COLORS['accent']),
-    bgcolor=COLORS['accent_bg'],
-    bordercolor=COLORS['accent'],
-    borderwidth=1,
-    borderpad=8
-)
-
-# PB badge
-fig1.add_annotation(
-    x=5, y=times[-1],
-    text="<b>🏆 PB</b>",
-    showarrow=False,
-    yshift=-32,
-    font=dict(size=10, color=COLORS['bg_dark']),
-    bgcolor=COLORS['accent'],
-    borderpad=5
-)
-
-# Layout
-fig1.update_layout(
-    yaxis=dict(
-        autorange="reversed",
-        title=dict(text="<b>Finish Time</b>", font=dict(size=11, color=COLORS['text_secondary'])),
-        tickvals=times,
-        ticktext=labels,
-        tickfont=dict(size=10, color=COLORS['text_secondary']),
-        showgrid=True,
-        gridwidth=1,
-        gridcolor=COLORS['grid'],
-        zeroline=False,
-        showline=False
-    ),
-    xaxis=dict(
-        title=dict(text="<b>Race</b>", font=dict(size=11, color=COLORS['text_secondary'])),
-        tickfont=dict(size=10, color=COLORS['text_secondary']),
-        showgrid=False,
-        zeroline=False,
-        showline=False
-    ),
-    height=480,
-    plot_bgcolor=COLORS['bg_dark'],
-    paper_bgcolor=COLORS['bg_dark'],
-    margin=dict(l=90, r=50, t=20, b=60),
-    hoverlabel=dict(
-        bgcolor=COLORS['bg_card'],
-        font_size=12,
-        font_family="Arial",
-        font_color=COLORS['text_bright'],
-        bordercolor=COLORS['border']
-    )
-)
-
-st.plotly_chart(fig1, use_container_width=True)
-
-st.markdown("---")
-
-# =============================================================================
-# VISUALIZATION 2: PACE EVOLUTION
-# =============================================================================
-
-st.markdown(f"""
-<h2 style="margin-bottom: 0.25rem; font-size: 1.5rem; color: {COLORS['text_bright']}; font-weight: 600;">
-    Pace Evolution
-</h2>
-<p style="color: {COLORS['text_secondary']}; font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 1.5rem;">
-    Average pace progression across six marathons
-</p>
-""", unsafe_allow_html=True)
-
-# Data
-pace_to_plot = marathon_df["Pace (min/km)"].tolist()
-pace_labels = marathon_df["Pace (min:sec/km)"].tolist()
-
-fig2 = go.Figure()
-
-# Soft glow fill
-fig2.add_trace(go.Scatter(
-    x=races + races[::-1],
-    y=[max(pace_to_plot) + 0.3] * len(races) + pace_to_plot[::-1],
-    fill='toself',
-    fillcolor=COLORS['fill'],
-    line=dict(color='rgba(0,0,0,0)'),
-    showlegend=False,
-    hoverinfo='skip'
-))
-
-# Main line
-fig2.add_trace(go.Scatter(
-    x=races, y=pace_to_plot,
-    mode='lines',
-    line=dict(color=COLORS['line'], width=3),
-    showlegend=False,
-    hoverinfo='skip'
-))
-
-# Gradient markers
-fig2.add_trace(go.Scatter(
-    x=races, y=pace_to_plot,
-    mode='markers',
-    marker=dict(
-        size=16,
-        color=COLORS['primary_gradient'],
-        line=dict(color=COLORS['bg_dark'], width=2)
-    ),
-    showlegend=False,
-    hovertemplate="<b>%{x}</b><br>Pace: %{customdata}/km<extra></extra>",
-    customdata=pace_labels
-))
-
-# Pace labels (alternating)
-for i, (race, pace, label) in enumerate(zip(races, pace_to_plot, pace_labels)):
-    yshift = 22 if i % 2 == 0 else -22
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    fig2.add_annotation(
-        x=race, y=pace,
-        text=f"<b>{label}/km</b>",
-        showarrow=False,
-        yshift=yshift,
-        font=dict(size=10, color=COLORS['text_bright']),
-        bgcolor=COLORS['bg_card'],
-        bordercolor=COLORS['border'],
-        borderwidth=1,
-        borderpad=5
-    )
-
-# Pace improvement badge
-pace_improvement = pace_to_plot[0] - pace_to_plot[-1]
-fig2.add_annotation(
-    x=2.5, y=5.5,
-    text=f"<b>⚡ {pace_improvement:.1f} min/km faster</b>",
-    showarrow=False,
-    font=dict(size=11, color=COLORS['accent']),
-    bgcolor=COLORS['accent_bg'],
-    bordercolor=COLORS['accent'],
-    borderwidth=1,
-    borderpad=8
-)
-
-# PB badge
-fig2.add_annotation(
-    x=5, y=pace_to_plot[-1],
-    text="<b>🏆 PB</b>",
-    showarrow=False,
-    yshift=32,
-    font=dict(size=10, color=COLORS['bg_dark']),
-    bgcolor=COLORS['accent'],
-    borderpad=5
-)
-
-# Corner badge
-fig2.add_annotation(
-    x=0.98, y=0.08,
-    xref="paper", yref="paper",
-    text="<b>6:30 → 4:50 /km</b>",
-    showarrow=False,
-    font=dict(size=10, color=COLORS['line']),
-    bgcolor=COLORS['bg_card'],
-    bordercolor=COLORS['border'],
-    borderwidth=1,
-    borderpad=6,
-    xanchor='right'
-)
-
-# Layout
-fig2.update_layout(
-    yaxis=dict(
-        autorange="reversed",
-        title=dict(text="<b>Pace (min/km)</b>", font=dict(size=11, color=COLORS['text_secondary'])),
-        tickvals=pace_to_plot,
-        ticktext=pace_labels,
-        tickfont=dict(size=10, color=COLORS['text_secondary']),
-        showgrid=True,
-        gridwidth=1,
-        gridcolor=COLORS['grid'],
-        zeroline=False,
-        showline=False
-    ),
-    xaxis=dict(
-        title=dict(text="<b>Race</b>", font=dict(size=11, color=COLORS['text_secondary'])),
-        tickfont=dict(size=10, color=COLORS['text_secondary']),
-        showgrid=False,
-        zeroline=False,
-        showline=False
-    ),
-    height=480,
-    plot_bgcolor=COLORS['bg_dark'],
-    paper_bgcolor=COLORS['bg_dark'],
-    margin=dict(l=90, r=50, t=20, b=60),
-    hoverlabel=dict(
-        bgcolor=COLORS['bg_card'],
-        font_size=12,
-        font_family="Arial",
-        font_color=COLORS['text_bright'],
-        bordercolor=COLORS['border']
-    )
-)
-
-st.plotly_chart(fig2, use_container_width=True)
-
-st.markdown("---")
+    # Two charts side by side
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown(f"<h3 style='font-size: 1.1rem; margin-bottom: 0.5rem;'>📉 Race Progression</h3>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: {COLORS['text_muted']}; font-size: 0.8rem; margin-bottom: 1rem;'>Finish times across 6 marathons</p>", unsafe_allow_html=True)
+        
+        races = marathon_df["Race"].tolist()
+        times = marathon_df["Official Time (min)"].tolist()
+        labels = marathon_df["Official Time"].tolist()
+        
+        fig1 = go.Figure()
+        fig1.add_trace(go.Scatter(
+            x=races, y=times, mode='lines+markers',
+            line=dict(color=COLORS['line'], width=2.5),
+            marker=dict(size=10, color=COLORS['primary_gradient'], line=dict(color=COLORS['bg_dark'], width=1.5)),
+            hovertemplate="<b>%{x}</b><br>%{customdata}<extra></extra>", customdata=labels
+        ))
+        fig1.update_layout(
+            yaxis=dict(autorange="reversed", tickvals=times, ticktext=labels, 
+                      tickfont=dict(size=9, color=COLORS['text_secondary']), showgrid=True, gridcolor=COLORS['grid']),
+            xaxis=dict(tickfont=dict(size=8, color=COLORS['text_secondary'])),
+            height=280, plot_bgcolor=COLORS['bg_dark'], paper_bgcolor=COLORS['bg_dark'],
+            margin=dict(l=55, r=15, t=10, b=35),
+            hoverlabel=dict(bgcolor=COLORS['bg_card'], font_color=COLORS['text_bright'])
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+    
+    with col2:
+        st.markdown(f"<h3 style='font-size: 1.1rem; margin-bottom: 0.5rem;'>📊 Yearly Volume</h3>", unsafe_allow_html=True)
+        st.markdown(f"<p style='color: {COLORS['text_muted']}; font-size: 0.8rem; margin-bottom: 1rem;'>Distance per year</p>", unsafe_allow_html=True)
+        
+        yearly = running_df.groupby("Year")["Distance (km)"].sum().reset_index()
+        years = yearly["Year"].astype(int).tolist()
+        distances = yearly["Distance (km)"].tolist()
+        
+        fig2 = go.Figure()
+        fig2.add_trace(go.Bar(
+            x=years, y=distances, marker_color=['#67E8F9', '#22D3EE', '#06B6D4', '#0891B2'],
+            marker_line=dict(color=COLORS['bg_dark'], width=1.5),
+            hovertemplate="<b>%{x}</b><br>%{y:,.0f} km<extra></extra>"
+        ))
+        fig2.update_layout(
+            yaxis=dict(tickfont=dict(size=9, color=COLORS['text_secondary']), showgrid=True, gridcolor=COLORS['grid']),
+            xaxis=dict(tickmode='array', tickvals=years, ticktext=[str(y) for y in years],
+                      tickfont=dict(size=9, color=COLORS['text_secondary'])),
+            height=280, plot_bgcolor=COLORS['bg_dark'], paper_bgcolor=COLORS['bg_dark'],
+            margin=dict(l=45, r=15, t=10, b=35),
+            hoverlabel=dict(bgcolor=COLORS['bg_card'], font_color=COLORS['text_bright'])
+        )
+        st.plotly_chart(fig2, use_container_width=True)
 
 # =============================================================================
-# VISUALIZATION 3: BUILDING THE BASE
+# PAGE: RACE TIMES
 # =============================================================================
-
-st.markdown(f"""
-<h2 style="margin-bottom: 0.25rem; font-size: 1.5rem; color: {COLORS['text_bright']}; font-weight: 600;">
-    Building the Base
-</h2>
-<p style="color: {COLORS['text_secondary']}; font-size: 0.9rem; margin-top: 0.25rem; margin-bottom: 1.5rem;">
-    Total running distance per year
-</p>
-""", unsafe_allow_html=True)
-
-# Data
-cumulative_distance_year_df = running_df.groupby("Year")["Distance (km)"].sum().reset_index()
-years = cumulative_distance_year_df["Year"].astype(int).tolist()
-year_distance = cumulative_distance_year_df["Distance (km)"].tolist()
-runs_per_year = running_df.groupby("Year").size().tolist()
-
-# Cyan gradient for bars
-bar_colors = ['#67E8F9', '#22D3EE', '#06B6D4', '#0891B2']
-
-fig3 = go.Figure()
-
-# Bar chart
-fig3.add_trace(go.Bar(
-    x=years,
-    y=year_distance,
-    marker_color=bar_colors,
-    marker_line=dict(color=COLORS['bg_dark'], width=2),
-    width=0.55,
-    hovertemplate="<b>%{x}</b><br>Distance: %{y:,.0f} km<extra></extra>"
-))
-
-# Distance labels on top
-for i, (year, dist) in enumerate(zip(years, year_distance)):
-    fig3.add_annotation(
-        x=year, y=dist + 35,
-        text=f"<b>{dist:,.0f} km</b>",
-        showarrow=False,
-        font=dict(size=12, color=COLORS['text_bright']),
-        yanchor='bottom'
+elif page == "🏃 Race Times":
+    st.markdown(f"<h2 style='font-size: 1.4rem; margin-bottom: 0.25rem;'>The 80-Minute Journey</h2>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: {COLORS['text_secondary']}; margin-bottom: 1.5rem;'>Marathon finish times from first race to personal best</p>", unsafe_allow_html=True)
+    
+    races = marathon_df["Race"].tolist()
+    times = marathon_df["Official Time (min)"].tolist()
+    labels = marathon_df["Official Time"].tolist()
+    
+    fig = go.Figure()
+    
+    # Fill
+    fig.add_trace(go.Scatter(
+        x=races + races[::-1], y=[max(times) + 10] * len(races) + times[::-1],
+        fill='toself', fillcolor=COLORS['fill'], line=dict(color='rgba(0,0,0,0)'),
+        showlegend=False, hoverinfo='skip'
+    ))
+    
+    # Line
+    fig.add_trace(go.Scatter(x=races, y=times, mode='lines', line=dict(color=COLORS['line'], width=3),
+                             showlegend=False, hoverinfo='skip'))
+    
+    # Markers
+    fig.add_trace(go.Scatter(
+        x=races, y=times, mode='markers',
+        marker=dict(size=16, color=COLORS['primary_gradient'], line=dict(color=COLORS['bg_dark'], width=2)),
+        hovertemplate="<b>%{x}</b><br>%{customdata}<extra></extra>", customdata=labels, showlegend=False
+    ))
+    
+    # Labels
+    for i, (r, t, l) in enumerate(zip(races, times, labels)):
+        fig.add_annotation(x=r, y=t, text=f"<b>{l}</b>", showarrow=False, yshift=-22 if i % 2 == 0 else 22,
+            font=dict(size=10, color=COLORS['text_bright']), bgcolor=COLORS['bg_card'],
+            bordercolor=COLORS['border'], borderwidth=1, borderpad=5)
+    
+    # Badges
+    fig.add_annotation(x=2.5, y=250, text="<b>⚡ 80 min faster</b>", showarrow=False,
+        font=dict(size=11, color=COLORS['accent']), bgcolor=COLORS['accent_bg'],
+        bordercolor=COLORS['accent'], borderwidth=1, borderpad=8)
+    fig.add_annotation(x=5, y=times[-1], text="<b>🏆 PB</b>", showarrow=False, yshift=-30,
+        font=dict(size=10, color=COLORS['bg_dark']), bgcolor=COLORS['accent'], borderpad=5)
+    
+    fig.update_layout(
+        yaxis=dict(autorange="reversed", title="<b>Finish Time</b>", tickvals=times, ticktext=labels,
+                  tickfont=dict(size=10, color=COLORS['text_secondary']), showgrid=True, gridcolor=COLORS['grid'],
+                  title_font=dict(size=11, color=COLORS['text_secondary'])),
+        xaxis=dict(title="<b>Race</b>", tickfont=dict(size=10, color=COLORS['text_secondary']),
+                  title_font=dict(size=11, color=COLORS['text_secondary'])),
+        height=500, plot_bgcolor=COLORS['bg_dark'], paper_bgcolor=COLORS['bg_dark'],
+        margin=dict(l=80, r=40, t=20, b=60),
+        hoverlabel=dict(bgcolor=COLORS['bg_card'], font_color=COLORS['text_bright'], bordercolor=COLORS['border'])
     )
+    st.plotly_chart(fig, use_container_width=True)
 
-# Run count inside bars
-for i, (year, dist, runs) in enumerate(zip(years, year_distance, runs_per_year)):
-    fig3.add_annotation(
-        x=year, y=dist / 2,
-        text=f"<b>{runs} runs</b>",
-        showarrow=False,
-        font=dict(size=10, color=COLORS['bg_dark'])
+# =============================================================================
+# PAGE: PACE ANALYSIS
+# =============================================================================
+elif page == "⚡ Pace Analysis":
+    st.markdown(f"<h2 style='font-size: 1.4rem; margin-bottom: 0.25rem;'>Pace Evolution</h2>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: {COLORS['text_secondary']}; margin-bottom: 1.5rem;'>Average pace progression across six marathons</p>", unsafe_allow_html=True)
+    
+    races = marathon_df["Race"].tolist()
+    paces = marathon_df["Pace (min/km)"].tolist()
+    pace_labels = marathon_df["Pace (min:sec/km)"].tolist()
+    
+    fig = go.Figure()
+    
+    # Fill
+    fig.add_trace(go.Scatter(
+        x=races + races[::-1], y=[max(paces) + 0.3] * len(races) + paces[::-1],
+        fill='toself', fillcolor=COLORS['fill'], line=dict(color='rgba(0,0,0,0)'),
+        showlegend=False, hoverinfo='skip'
+    ))
+    
+    # Line
+    fig.add_trace(go.Scatter(x=races, y=paces, mode='lines', line=dict(color=COLORS['line'], width=3),
+                             showlegend=False, hoverinfo='skip'))
+    
+    # Markers
+    fig.add_trace(go.Scatter(
+        x=races, y=paces, mode='markers',
+        marker=dict(size=16, color=COLORS['primary_gradient'], line=dict(color=COLORS['bg_dark'], width=2)),
+        hovertemplate="<b>%{x}</b><br>%{customdata}/km<extra></extra>", customdata=pace_labels, showlegend=False
+    ))
+    
+    # Labels
+    for i, (r, p, l) in enumerate(zip(races, paces, pace_labels)):
+        fig.add_annotation(x=r, y=p, text=f"<b>{l}/km</b>", showarrow=False, yshift=22 if i % 2 == 0 else -22,
+            font=dict(size=10, color=COLORS['text_bright']), bgcolor=COLORS['bg_card'],
+            bordercolor=COLORS['border'], borderwidth=1, borderpad=5)
+    
+    # Badges
+    improvement = paces[0] - paces[-1]
+    fig.add_annotation(x=2.5, y=5.5, text=f"<b>⚡ {improvement:.1f} min/km faster</b>", showarrow=False,
+        font=dict(size=11, color=COLORS['accent']), bgcolor=COLORS['accent_bg'],
+        bordercolor=COLORS['accent'], borderwidth=1, borderpad=8)
+    fig.add_annotation(x=5, y=paces[-1], text="<b>🏆 PB</b>", showarrow=False, yshift=30,
+        font=dict(size=10, color=COLORS['bg_dark']), bgcolor=COLORS['accent'], borderpad=5)
+    fig.add_annotation(x=0.98, y=0.08, xref="paper", yref="paper", text="<b>6:30 → 4:50 /km</b>",
+        showarrow=False, font=dict(size=10, color=COLORS['line']), bgcolor=COLORS['bg_card'],
+        bordercolor=COLORS['border'], borderwidth=1, borderpad=6, xanchor='right')
+    
+    fig.update_layout(
+        yaxis=dict(autorange="reversed", title="<b>Pace (min/km)</b>", tickvals=paces, ticktext=pace_labels,
+                  tickfont=dict(size=10, color=COLORS['text_secondary']), showgrid=True, gridcolor=COLORS['grid'],
+                  title_font=dict(size=11, color=COLORS['text_secondary'])),
+        xaxis=dict(title="<b>Race</b>", tickfont=dict(size=10, color=COLORS['text_secondary']),
+                  title_font=dict(size=11, color=COLORS['text_secondary'])),
+        height=500, plot_bgcolor=COLORS['bg_dark'], paper_bgcolor=COLORS['bg_dark'],
+        margin=dict(l=80, r=40, t=20, b=60),
+        hoverlabel=dict(bgcolor=COLORS['bg_card'], font_color=COLORS['text_bright'], bordercolor=COLORS['border'])
     )
+    st.plotly_chart(fig, use_container_width=True)
 
-# Growth badge
-growth = year_distance[-1] / year_distance[0]
-fig3.add_annotation(
-    x=2023.5, y=max(year_distance) * 1.15,
-    text=f"<b>📈 {growth:.0f}x volume growth</b>",
-    showarrow=False,
-    font=dict(size=12, color=COLORS['accent']),
-    bgcolor=COLORS['accent_bg'],
-    bordercolor=COLORS['accent'],
-    borderwidth=1,
-    borderpad=8
-)
-
-# Total badge
-total_km = sum(year_distance)
-fig3.add_annotation(
-    x=0.98, y=0.96,
-    xref="paper", yref="paper",
-    text=f"<b>Total: {total_km:,.0f} km</b>",
-    showarrow=False,
-    font=dict(size=11, color=COLORS['line']),
-    bgcolor=COLORS['bg_card'],
-    bordercolor=COLORS['border'],
-    borderwidth=1,
-    borderpad=8,
-    xanchor='right', yanchor='top'
-)
-
-# Layout
-fig3.update_layout(
-    yaxis=dict(
-        title=dict(text="<b>Distance (km)</b>", font=dict(size=11, color=COLORS['text_secondary'])),
-        range=[0, max(year_distance) * 1.30],
-        tickfont=dict(size=10, color=COLORS['text_secondary']),
-        showgrid=True,
-        gridwidth=1,
-        gridcolor=COLORS['grid'],
-        zeroline=False,
-        showline=False
-    ),
-    xaxis=dict(
-        title=dict(text="<b>Year</b>", font=dict(size=11, color=COLORS['text_secondary'])),
-        tickmode='array',
-        tickvals=years,
-        ticktext=[str(y) for y in years],
-        tickfont=dict(size=11, color=COLORS['text_secondary']),
-        showgrid=False,
-        zeroline=False,
-        showline=False
-    ),
-    height=480,
-    plot_bgcolor=COLORS['bg_dark'],
-    paper_bgcolor=COLORS['bg_dark'],
-    margin=dict(l=70, r=50, t=20, b=60),
-    hoverlabel=dict(
-        bgcolor=COLORS['bg_card'],
-        font_size=12,
-        font_family="Arial",
-        font_color=COLORS['text_bright'],
-        bordercolor=COLORS['border']
-    ),
-    bargap=0.3
-)
-
-st.plotly_chart(fig3, use_container_width=True)
+# =============================================================================
+# PAGE: TRAINING VOLUME
+# =============================================================================
+elif page == "📈 Training Volume":
+    st.markdown(f"<h2 style='font-size: 1.4rem; margin-bottom: 0.25rem;'>Building the Base</h2>", unsafe_allow_html=True)
+    st.markdown(f"<p style='color: {COLORS['text_secondary']}; margin-bottom: 1.5rem;'>Total running distance per year</p>", unsafe_allow_html=True)
+    
+    yearly = running_df.groupby("Year")["Distance (km)"].sum().reset_index()
+    years = yearly["Year"].astype(int).tolist()
+    distances = yearly["Distance (km)"].tolist()
+    runs = running_df.groupby("Year").size().tolist()
+    
+    fig = go.Figure()
+    fig.add_trace(go.Bar(
+        x=years, y=distances, marker_color=['#67E8F9', '#22D3EE', '#06B6D4', '#0891B2'],
+        marker_line=dict(color=COLORS['bg_dark'], width=2), width=0.55,
+        hovertemplate="<b>%{x}</b><br>%{y:,.0f} km<extra></extra>"
+    ))
+    
+    # Distance labels
+    for i, (y, d) in enumerate(zip(years, distances)):
+        fig.add_annotation(x=y, y=d + 35, text=f"<b>{d:,.0f} km</b>", showarrow=False,
+            font=dict(size=12, color=COLORS['text_bright']), yanchor='bottom')
+    
+    # Run count labels
+    for i, (y, d, r) in enumerate(zip(years, distances, runs)):
+        fig.add_annotation(x=y, y=d / 2, text=f"<b>{r} runs</b>", showarrow=False,
+            font=dict(size=10, color=COLORS['bg_dark']))
+    
+    # Badges
+    growth = distances[-1] / distances[0]
+    fig.add_annotation(x=2023.5, y=max(distances) * 1.15, text=f"<b>📈 {growth:.0f}x growth</b>",
+        showarrow=False, font=dict(size=12, color=COLORS['accent']), bgcolor=COLORS['accent_bg'],
+        bordercolor=COLORS['accent'], borderwidth=1, borderpad=8)
+    fig.add_annotation(x=0.98, y=0.96, xref="paper", yref="paper", text=f"<b>Total: {sum(distances):,.0f} km</b>",
+        showarrow=False, font=dict(size=11, color=COLORS['line']), bgcolor=COLORS['bg_card'],
+        bordercolor=COLORS['border'], borderwidth=1, borderpad=8, xanchor='right', yanchor='top')
+    
+    fig.update_layout(
+        yaxis=dict(title="<b>Distance (km)</b>", range=[0, max(distances) * 1.3],
+                  tickfont=dict(size=10, color=COLORS['text_secondary']), showgrid=True, gridcolor=COLORS['grid'],
+                  title_font=dict(size=11, color=COLORS['text_secondary'])),
+        xaxis=dict(title="<b>Year</b>", tickmode='array', tickvals=years, ticktext=[str(y) for y in years],
+                  tickfont=dict(size=11, color=COLORS['text_secondary']),
+                  title_font=dict(size=11, color=COLORS['text_secondary'])),
+        height=500, plot_bgcolor=COLORS['bg_dark'], paper_bgcolor=COLORS['bg_dark'],
+        margin=dict(l=70, r=40, t=20, b=60), bargap=0.3,
+        hoverlabel=dict(bgcolor=COLORS['bg_card'], font_color=COLORS['text_bright'], bordercolor=COLORS['border'])
+    )
+    st.plotly_chart(fig, use_container_width=True)
 
 # -----------------------------------------------------------------------------
 # FOOTER
 # -----------------------------------------------------------------------------
 st.markdown("---")
 st.markdown(f"""
-<div style="text-align: center; padding: 1.5rem 0 2rem 0;">
-    <p style="margin: 0; font-size: 0.85rem; color: {COLORS['text_muted']};">
-        Built with Streamlit &nbsp;•&nbsp; Data from Strava
-    </p>
-    <p style="margin: 0.3rem 0 0 0; font-size: 0.8rem; color: {COLORS['text_muted']};">
-        The 80-Minute Journey: A Data-Driven Analysis of Marathon Progression
+<div style="text-align: center; padding: 1rem 0;">
+    <p style="color: {COLORS['text_muted']}; font-size: 0.8rem; margin: 0;">
+        Built with ❤️ using Streamlit • Data from Strava • The 80-Minute Journey
     </p>
 </div>
 """, unsafe_allow_html=True)
