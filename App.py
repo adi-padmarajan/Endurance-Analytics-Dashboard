@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.graph_objects as go
 
 st.title("The 80 Minutes Journey")
 st.subheader("A Data-Driven Analysis of Marathon Progression (2022 – 2025)")
@@ -31,12 +32,6 @@ The dataset is sourced from a complete Strava activity export containing 449 tot
 *Note: Heart rate data is unavailable for the first 20 runs (Feb–Jun 2022) due to the absence of a heart rate monitor during that period.*
 """)
 
-with st.expander("Show activities_dataset.csv"):
-	st.dataframe(activities_df)
-
-with st.expander("Show global_challenges.csv"):
-	st.dataframe(challenges_df)
-
 st.markdown(
 """
 
@@ -53,4 +48,48 @@ st.markdown(
 
 """
 )
+
+st.markdown("### Marathon Progression Timeline")
+st.markdown("*Finish time improvements across all 6 marathon races*")
+
+# Define the data for the chart
+races = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
+times_minutes = [286.12, 265.80, 256.97, 227.78, 217.38, 206.00]  # Finish times in minutes
+times_labels = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]  # H:M:S format labels
+
+# Create Plotly figure (needed for custom y-axis formatting and inversion)
+fig = go.Figure()
+
+# Add line trace with markers
+fig.add_trace(go.Scatter(
+    x=races,
+    y=times_minutes,
+    mode='lines+markers',  # Show both line and data points
+    marker=dict(size=10, color='#1f77b4'),  # Blue markers
+    line=dict(width=2, color='#1f77b4'),  # Blue line
+    hovertemplate="<b>%{x}</b><br>Time: %{customdata}<extra></extra>",  # Custom hover text
+    customdata=times_labels  # Pass H:M:S labels for hover
+))
+
+# ADDED: Update layout with inverted y-axis and H:M:S tick labels
+fig.update_layout(
+    xaxis=dict(
+        title=dict(text="Race", font=dict(size=14)),  # X-axis label
+        tickfont=dict(size=12)
+    ),
+    yaxis=dict(
+        title=dict(text="Finish Time (H:M:S)", font=dict(size=14)),  # Y-axis label
+        tickvals=times_minutes,  # Set tick positions at each data point
+        ticktext=times_labels,   # Display H:M:S labels instead of minutes
+        autorange="reversed",    # INVERTED: Lower times (faster) appear at top
+        tickfont=dict(size=12)
+    ),
+    height=450,
+    margin=dict(l=80, r=40, t=40, b=60),
+    hovermode='x unified'
+)
+
+# Display the Plotly chart in Streamlit
+st.plotly_chart(fig, use_container_width=True)
+
 
