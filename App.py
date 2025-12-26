@@ -126,8 +126,8 @@ with col1:
         height=400,
         margin=dict(l=70, r=30, t=30, b=60),
         hovermode='x unified',
-        plot_bgcolor='rgba(248, 250, 252, 0.5)',
-        paper_bgcolor='rgba(255, 255, 255, 0)',
+        plot_bgcolor='black',
+        paper_bgcolor='black',
         font=dict(family='Arial', color='#334155'),
         hoverlabel=dict(
             bgcolor='white',
@@ -190,8 +190,8 @@ with col2:
         height=400,
         margin=dict(l=70, r=30, t=30, b=60),
         hovermode='x unified',
-        plot_bgcolor='rgba(248, 250, 252, 0.5)',
-        paper_bgcolor='rgba(255, 255, 255, 0)',
+        plot_bgcolor='black',
+        paper_bgcolor='black',
         font=dict(family='Arial', color='#334155'),
         hoverlabel=dict(
             bgcolor='white',
