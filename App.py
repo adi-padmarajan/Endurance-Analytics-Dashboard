@@ -5,12 +5,12 @@ import plotly.graph_objects as go
 
 # Page configuration for a wide layout
 st.set_page_config(
-    page_title="The 80-Minute Journey",  # Browser tab title
-    page_icon="🏃",                       # Browser tab icon
+    page_title="The Sub-3:30 Protocol",  # Browser tab title
+    page_icon="⭐",                       # Browser tab icon
     layout="wide"                         # Use full width of the page
 )
 
-st.title("The 80 Minutes Journey")
+st.title("The Sub-3:30 Protocol: A 6-Race Journey from Sub-5")
 st.subheader("A Data-Driven Analysis of Marathon Progression (2022 – 2025)")
 
 st.markdown("<hr>", unsafe_allow_html=True)
