@@ -72,13 +72,14 @@ races = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
 times_minutes = [286.12, 265.80, 256.97, 227.78, 217.38, 206.00]  # Finish times in minutes
 times_labels = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]  # H:M:S format labels
 
+st.markdown("## Marathon Performance Metrics")
 
 col1, col2, col3 = st.columns(3)
 
 # Marathon Progression Timeline
 
 with col1:
-    st.markdown("### Marathon Progression Timeline")
+    st.markdown("#### Marathon Progression Timeline")
     st.markdown("*Finish time improvements across all 6 marathon races*")
 
     # Define the data for the chart
@@ -143,7 +144,7 @@ with col1:
 # Pace Evolution Curve (NEW - Green color, right column)
 
 with col2:
-    st.markdown("### Pace Evolution Curve")
+    st.markdown("#### Pace Evolution Curve")
     st.markdown("*Average pace progression from 6:30/km to 4:50/km*")
 
     # Define pace data for the chart
@@ -208,7 +209,7 @@ with col2:
 
 with col3:
     # Building the Base
-    st.markdown("### Building the Base")
+    st.markdown("#### Building the Base")
     st.markdown("*Total running distance per year*")
 
     # Calculate yearly totals
