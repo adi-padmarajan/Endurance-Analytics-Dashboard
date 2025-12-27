@@ -67,10 +67,21 @@ with st.expander("### Link to Github Repository and Jupyter Notebook", expanded 
 
 st.markdown("<hr>", unsafe_allow_html=True)
 
-# Define the data for the chart
-races = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
-times_minutes = [286.12, 265.80, 256.97, 227.78, 217.38, 206.00]  # Finish times in minutes
-times_labels = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]  # H:M:S format labels
+# Prepare Heart Rate Data
+# Filter out race distances (marathons > 40km) and ensure HR data exists
+df_hr = activities_df[
+    (activities_df['Activity Type'] == 'Run') &
+    (activities_df['Average Heart Rate'].notna()) &
+    (activities_df['Distance'] <= 40)
+].copy()
+
+# Parse dates and add Year column
+df_hr['Activity Date'] = pd.to_datetime(df_hr['Activity Date'], format="%b %d, %Y, %I:%M:%S %p")
+df_hr['Year'] = df_hr['Activity Date'].dt.year
+
+# Calculate pace
+df_hr['Pace (min/km)'] = 1000 / (df_hr['Average Speed'] * 60)
+df_hr = df_hr.rename(columns={'Average Heart Rate': 'Avg HR (bpm)'})
 
 st.markdown("## Marathon Performance and Training Metrics")
 
@@ -284,7 +295,119 @@ with col3:
 
     st.plotly_chart(fig3, use_container_width=True)
 
+st.markdown("<hr>", unsafe_allow_html=True)
 
+# Heart Rate Efficiency Analysis Section
+st.markdown("## Heart Rate Efficiency: Pace vs HR by Year")
+st.markdown("*Training runs only - excludes marathon races (>40km)*")
+
+# Create 2x2 grid for year-by-year analysis
+years = sorted(df_hr["Year"].unique())
+
+# Get global min/max for consistent color scale across all years
+hr_min = df_hr["Avg HR (bpm)"].min()
+hr_max = df_hr["Avg HR (bpm)"].max()
+
+# Create rows for 2x2 layout
+row1_col1, row1_col2 = st.columns(2)
+row2_col1, row2_col2 = st.columns(2)
+
+columns = [row1_col1, row1_col2, row2_col1, row2_col2]
+
+for i, year in enumerate(years):
+    with columns[i]:
+        # Year title
+        st.markdown(f"### {int(year)}")
+
+        # Filter data for this year
+        subset = df_hr[df_hr["Year"] == year].copy()
+
+        # Create scatter plot
+        fig_hr = go.Figure()
+
+        fig_hr.add_trace(go.Scatter(
+            x=subset["Pace (min/km)"],
+            y=subset["Avg HR (bpm)"],
+            mode='markers',
+            marker=dict(
+                size=10,
+                color=subset["Avg HR (bpm)"],
+                colorscale=[
+                    [0.0, '#fee5d9'],   # Light orange (low HR)
+                    [0.2, '#fcbba1'],   # Light red-orange
+                    [0.4, '#fc9272'],   # Medium orange-red
+                    [0.6, '#fb6a4a'],   # Red-orange
+                    [0.8, '#de2d26'],   # Red
+                    [1.0, '#a50f15']    # Dark red (high HR)
+                ],
+                cmin=hr_min,
+                cmax=hr_max,
+                showscale=True,
+                colorbar=dict(
+                    title=dict(
+                        text="Avg HR<br>(bpm)",
+                        font=dict(size=11, color='#334155', family='Arial')
+                    ),
+                    titleside="right",
+                    thickness=12,
+                    len=0.85,
+                    x=1.02,
+                    xpad=5,
+                    tickfont=dict(size=10, color='#475569'),
+                    outlinewidth=0
+                ),
+                line=dict(color='white', width=0.5),
+                opacity=0.7
+            ),
+            hovertemplate="<span style='color: black'><b>Pace:</b> %{x:.2f} min/km<br><b>HR:</b> %{y:.0f} bpm</span><extra></extra>"
+        ))
+
+        # Update layout to match notebook style
+        fig_hr.update_layout(
+            xaxis=dict(
+                title=dict(
+                    text="Pace (min/km)",
+                    font=dict(size=12, color='#334155', family='Arial')
+                ),
+                tickfont=dict(size=10, color='#475569'),
+                showgrid=True,
+                gridcolor='rgba(100, 100, 100, 0.2)',
+                gridwidth=1,
+                showline=True,
+                linecolor='rgba(100, 100, 100, 0.3)',
+                linewidth=1.5,
+                autorange="reversed",  # Inverted: faster pace (lower values) on left
+                zeroline=False
+            ),
+            yaxis=dict(
+                title=dict(
+                    text="Avg HR (bpm)",
+                    font=dict(size=12, color='#334155', family='Arial')
+                ),
+                tickfont=dict(size=10, color='#475569'),
+                showgrid=True,
+                gridcolor='rgba(100, 100, 100, 0.2)',
+                gridwidth=1,
+                showline=True,
+                linecolor='rgba(100, 100, 100, 0.3)',
+                linewidth=1.5,
+                zeroline=False
+            ),
+            height=380,
+            margin=dict(l=70, r=90, t=20, b=60),
+            plot_bgcolor='black',
+            paper_bgcolor='black',
+            font=dict(family='Arial', color='#334155'),
+            hoverlabel=dict(
+                bgcolor='white',
+                font_size=11,
+                font_family='Arial',
+                bordercolor='#fb6a4a',
+                font_color='black'
+            )
+        )
+
+        st.plotly_chart(fig_hr, use_container_width=True)
 
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
