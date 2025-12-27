@@ -133,7 +133,8 @@ with col1:
             bgcolor='white',
             font_size=13,
             font_family='Arial',
-            bordercolor='#3B82F6'
+            bordercolor='#3B82F6',
+			font_color = 'black'
         )
     )
 
@@ -160,7 +161,7 @@ with col2:
         mode='lines+markers',
         marker=dict(size=10, color='#10B981'),  # Green markers
         line=dict(width=2.5, color='#10B981'),  # Green line
-        hovertemplate="<b>%{x}</b><br>Pace: %{customdata}/km<extra></extra>",
+        hovertemplate="<span style = \"color: black\"><b>%{x}</b><br>Pace: %{customdata}/km</span> <extra></extra>",
         customdata=pace_labels
     ))
 
@@ -197,7 +198,8 @@ with col2:
             bgcolor='white',
             font_size=13,
             font_family='Arial',
-            bordercolor='#10B981'
+            bordercolor='#10B981',
+			font_color = 'black'
         )
     )
 
@@ -208,7 +210,7 @@ st.markdown("<hr>", unsafe_allow_html=True)
 
 # Building the Base
 st.markdown("### Building the Base")
-st.markdown("*Total running distance and activity count per year*")
+st.markdown("*Total running distance per year*")
 
 # Calculate yearly totals
 yearly_data = activities_df[activities_df['Activity Type'] == 'Run'].copy()
@@ -225,8 +227,8 @@ years = yearly_summary['Year'].astype(int).tolist()
 distances = yearly_summary['Total Distance (km)'].tolist()
 run_counts = yearly_summary['Number of Runs'].tolist()
 
-# Create color gradient (light to dark green)
-colors = ['#A5D6A7', '#66BB6A', '#43A047', '#2E7D32']
+# Color Gradient (Purple)
+colors = ['#d896ff', '#be29ec', '#800080', '#660066']
 
 # Create Plotly figure
 fig3 = go.Figure()
@@ -237,12 +239,13 @@ fig3.add_trace(go.Bar(
     y=distances,
     marker=dict(
         color=colors,
-        line=dict(color='white', width=2)
+        line=dict(color = "white", width=0.5)
     ),
-    text=[f"{dist:.0f} km<br>{runs} runs" for dist, runs in zip(distances, run_counts)],
+    text=[f"{dist:.0f} km" for dist, runs in zip(distances, run_counts)],
     textposition='inside',
-    textfont=dict(size=13, color='white', family='Arial'),
-    hovertemplate="<b>%{x}</b><br>Distance: %{y:.0f} km<br>Runs: %{customdata}<extra></extra>",
+	insidetextanchor="middle", # Vertical Centering
+    textfont=dict(size=15, color='white', family='Arial'),
+    hovertemplate="<span style = \"color: black\"><b>%{x}</b><br>Distance: %{y:.0f} km</span> <br> <span style = \"color: black\"> Runs: %{customdata}</span> <extra></extra>",
     customdata=run_counts
 ))
 
