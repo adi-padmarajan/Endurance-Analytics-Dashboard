@@ -73,7 +73,7 @@ times_minutes = [286.12, 265.80, 256.97, 227.78, 217.38, 206.00]  # Finish times
 times_labels = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]  # H:M:S format labels
 
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 # Marathon Progression Timeline
 
@@ -206,86 +206,86 @@ with col2:
     # Display the pace chart
     st.plotly_chart(fig2, use_container_width=True)
 
-st.markdown("<hr>", unsafe_allow_html=True)
+with col3:
+    # Building the Base
+    st.markdown("### Building the Base")
+    st.markdown("*Total running distance per year*")
 
-# Building the Base
-st.markdown("### Building the Base")
-st.markdown("*Total running distance per year*")
+    # Calculate yearly totals
+    yearly_data = activities_df[activities_df['Activity Type'] == 'Run'].copy()
+    yearly_data['Activity Date'] = pd.to_datetime(yearly_data['Activity Date'], format="%b %d, %Y, %I:%M:%S %p")
+    yearly_data['Year'] = yearly_data['Activity Date'].dt.year
 
-# Calculate yearly totals
-yearly_data = activities_df[activities_df['Activity Type'] == 'Run'].copy()
-yearly_data['Activity Date'] = pd.to_datetime(yearly_data['Activity Date'], format="%b %d, %Y, %I:%M:%S %p")
-yearly_data['Year'] = yearly_data['Activity Date'].dt.year
+    yearly_summary = yearly_data.groupby('Year').agg({
+        'Distance': 'sum',
+        'Activity ID': 'count'
+    }).reset_index()
+    yearly_summary.columns = ['Year', 'Total Distance (km)', 'Number of Runs']
 
-yearly_summary = yearly_data.groupby('Year').agg({
-    'Distance': 'sum',
-    'Activity ID': 'count'
-}).reset_index()
-yearly_summary.columns = ['Year', 'Total Distance (km)', 'Number of Runs']
+    years = yearly_summary['Year'].astype(int).tolist()
+    distances = yearly_summary['Total Distance (km)'].tolist()
+    run_counts = yearly_summary['Number of Runs'].tolist()
 
-years = yearly_summary['Year'].astype(int).tolist()
-distances = yearly_summary['Total Distance (km)'].tolist()
-run_counts = yearly_summary['Number of Runs'].tolist()
+    # Color Gradient (Purple)
+    colors = ['#d896ff', '#be29ec', '#800080', '#660066']
 
-# Color Gradient (Purple)
-colors = ['#d896ff', '#be29ec', '#800080', '#660066']
+    # Create Plotly figure
+    fig3 = go.Figure()
 
-# Create Plotly figure
-fig3 = go.Figure()
+    # Add bar trace
+    fig3.add_trace(go.Bar(
+        x=years,
+        y=distances,
+        marker=dict(
+            color=colors,
+            line=dict(color = "white", width=0.5)
+        ),
+        text=[f"{dist:.0f} km" for dist, runs in zip(distances, run_counts)],
+        textposition='inside',
+        insidetextanchor="middle", # Vertical Centering
+        textfont=dict(size=11, color='white', family='Arial'),
+        hovertemplate="<span style = \"color: black\"><b>%{x}</b><br>Distance: %{y:.0f} km</span> <br> <span style = \"color: black\"> Runs: %{customdata}</span> <extra></extra>",
+        customdata=run_counts
+    ))
 
-# Add bar trace
-fig3.add_trace(go.Bar(
-    x=years,
-    y=distances,
-    marker=dict(
-        color=colors,
-        line=dict(color = "white", width=0.5)
-    ),
-    text=[f"{dist:.0f} km" for dist, runs in zip(distances, run_counts)],
-    textposition='inside',
-	insidetextanchor="middle", # Vertical Centering
-    textfont=dict(size=15, color='white', family='Arial'),
-    hovertemplate="<span style = \"color: black\"><b>%{x}</b><br>Distance: %{y:.0f} km</span> <br> <span style = \"color: black\"> Runs: %{customdata}</span> <extra></extra>",
-    customdata=run_counts
-))
+    # Update layout
+    fig3.update_layout(
+        xaxis=dict(
+            title=dict(text="Year", font=dict(size=14, color='#334155', family='Arial')),
+            tickfont=dict(size=12, color='#475569'),
+            showgrid=False,
+            showline=True,
+            linecolor='rgba(148, 163, 184, 0.3)',
+            linewidth=1
+        ),
+        yaxis=dict(
+            title=dict(text="Total Distance (km)", font=dict(size=14, color='#334155', family='Arial')),
+            tickfont=dict(size=12, color='#475569'),
+            showgrid=True,
+            gridcolor='rgba(148, 163, 184, 0.15)',
+            showline=True,
+            linecolor='rgba(148, 163, 184, 0.3)',
+            linewidth=1
+        ),
+        height=400,
+        margin=dict(l=70, r=30, t=30, b=60),
+        plot_bgcolor='black',
+        paper_bgcolor='black',
+        font=dict(family='Arial', color='#334155'),
+        hoverlabel=dict(
+            bgcolor='white',
+            font_size=13,
+            font_family='Arial',
+            bordercolor='#2E7D32'
+        ),
+        showlegend=False
+    )
 
-# Update layout
-fig3.update_layout(
-    xaxis=dict(
-        title=dict(text="Year", font=dict(size=14, color='#334155', family='Arial')),
-        tickfont=dict(size=12, color='#475569'),
-        showgrid=False,
-        showline=True,
-        linecolor='rgba(148, 163, 184, 0.3)',
-        linewidth=1
-    ),
-    yaxis=dict(
-        title=dict(text="Total Distance (km)", font=dict(size=14, color='#334155', family='Arial')),
-        tickfont=dict(size=12, color='#475569'),
-        showgrid=True,
-        gridcolor='rgba(148, 163, 184, 0.15)',
-        showline=True,
-        linecolor='rgba(148, 163, 184, 0.3)',
-        linewidth=1
-    ),
-    height=600,
-    margin=dict(l=70, r=30, t=30, b=60),
-    plot_bgcolor='black',
-    paper_bgcolor='black',
-    font=dict(family='Arial', color='#334155'),
-    hoverlabel=dict(
-        bgcolor='white',
-        font_size=13,
-        font_family='Arial',
-        bordercolor='#2E7D32'
-    ),
-    showlegend=False
-)
+    st.plotly_chart(fig3, use_container_width=True)
 
-st.plotly_chart(fig3, use_container_width=True)
+
 
 # Footer
-
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(
     """
