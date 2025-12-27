@@ -72,7 +72,7 @@ races = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
 times_minutes = [286.12, 265.80, 256.97, 227.78, 217.38, 206.00]  # Finish times in minutes
 times_labels = ["4:46:07", "4:25:48", "4:16:58", "3:47:47", "3:37:23", "3:26:00"]  # H:M:S format labels
 
-st.markdown("## Marathon Performance Metrics")
+st.markdown("## Marathon Performance and Training Metrics")
 
 col1, col2, col3 = st.columns(3)
 
@@ -209,7 +209,7 @@ with col2:
 
 with col3:
     # Building the Base
-    st.markdown("#### Building the Base")
+    st.markdown("#### Annual Running Volume")
     st.markdown("*Total running distance per year*")
 
     # Calculate yearly totals
