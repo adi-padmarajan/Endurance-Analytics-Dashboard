@@ -145,15 +145,15 @@ with col2:
     st.markdown("### Pace Evolution Curve")
     st.markdown("*Average pace progression from 6:30/km to 4:50/km*")
 
-    # ADDED: Define pace data for the chart
+    # Define pace data for the chart
     races = ["RVM 2022", "BMO 2023", "RVM 2023", "RVM 2024", "BMO 2025", "RVM 2025"]
     pace_decimal = [6.50, 6.22, 6.07, 5.37, 5.12, 4.83]  # Pace in decimal minutes (e.g., 6:30 = 6.5)
     pace_labels = ["6:30", "6:13", "6:04", "5:22", "5:07", "4:50"]  # M:SS format labels
 
-    # ADDED: Create Plotly figure for pace chart
+    # Create Plotly figure for pace chart
     fig2 = go.Figure()
 
-    # ADDED: Add line trace with markers (Green color)
+    # Add line trace with markers (Green color)
     fig2.add_trace(go.Scatter(
         x=races,
         y=pace_decimal,
@@ -164,7 +164,7 @@ with col2:
         customdata=pace_labels
     ))
 
-    # ADDED: Update layout with inverted y-axis and pace labels
+    # Update layout with inverted y-axis and pace labels
     fig2.update_layout(
         xaxis=dict(
             title=dict(text="Race", font=dict(size=14, color='#334155', family='Arial')),
@@ -201,10 +201,85 @@ with col2:
         )
     )
 
-    # ADDED: Display the pace chart
+    # Display the pace chart
     st.plotly_chart(fig2, use_container_width=True)
 
+st.markdown("<hr>", unsafe_allow_html=True)
 
+# Building the Base
+st.markdown("### Building the Base")
+st.markdown("*Total running distance and activity count per year*")
+
+# Calculate yearly totals
+yearly_data = activities_df[activities_df['Activity Type'] == 'Run'].copy()
+yearly_data['Activity Date'] = pd.to_datetime(yearly_data['Activity Date'], format="%b %d, %Y, %I:%M:%S %p")
+yearly_data['Year'] = yearly_data['Activity Date'].dt.year
+
+yearly_summary = yearly_data.groupby('Year').agg({
+    'Distance': 'sum',
+    'Activity ID': 'count'
+}).reset_index()
+yearly_summary.columns = ['Year', 'Total Distance (km)', 'Number of Runs']
+
+years = yearly_summary['Year'].astype(int).tolist()
+distances = yearly_summary['Total Distance (km)'].tolist()
+run_counts = yearly_summary['Number of Runs'].tolist()
+
+# Create color gradient (light to dark green)
+colors = ['#A5D6A7', '#66BB6A', '#43A047', '#2E7D32']
+
+# Create Plotly figure
+fig3 = go.Figure()
+
+# Add bar trace
+fig3.add_trace(go.Bar(
+    x=years,
+    y=distances,
+    marker=dict(
+        color=colors,
+        line=dict(color='white', width=2)
+    ),
+    text=[f"{dist:.0f} km<br>{runs} runs" for dist, runs in zip(distances, run_counts)],
+    textposition='inside',
+    textfont=dict(size=13, color='white', family='Arial'),
+    hovertemplate="<b>%{x}</b><br>Distance: %{y:.0f} km<br>Runs: %{customdata}<extra></extra>",
+    customdata=run_counts
+))
+
+# Update layout
+fig3.update_layout(
+    xaxis=dict(
+        title=dict(text="Year", font=dict(size=14, color='#334155', family='Arial')),
+        tickfont=dict(size=12, color='#475569'),
+        showgrid=False,
+        showline=True,
+        linecolor='rgba(148, 163, 184, 0.3)',
+        linewidth=1
+    ),
+    yaxis=dict(
+        title=dict(text="Total Distance (km)", font=dict(size=14, color='#334155', family='Arial')),
+        tickfont=dict(size=12, color='#475569'),
+        showgrid=True,
+        gridcolor='rgba(148, 163, 184, 0.15)',
+        showline=True,
+        linecolor='rgba(148, 163, 184, 0.3)',
+        linewidth=1
+    ),
+    height=600,
+    margin=dict(l=70, r=30, t=30, b=60),
+    plot_bgcolor='black',
+    paper_bgcolor='black',
+    font=dict(family='Arial', color='#334155'),
+    hoverlabel=dict(
+        bgcolor='white',
+        font_size=13,
+        font_family='Arial',
+        bordercolor='#2E7D32'
+    ),
+    showlegend=False
+)
+
+st.plotly_chart(fig3, use_container_width=True)
 
 # Footer
 
