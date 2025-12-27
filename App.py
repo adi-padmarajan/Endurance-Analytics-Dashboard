@@ -10,6 +10,142 @@ st.set_page_config(
     layout="wide"                         # Use full width of the page
 )
 
+# ===== CURATED CINEMATIC PALETTE: "Neo-Tokyo Nights" =====
+# Optimized for visual appeal, readability, and long viewing sessions
+#
+# Color Philosophy:
+# - Deep, rich tones for cinematic depth
+# - Warm amber instead of harsh orange for sophistication
+# - Muted teal for contrast without eye strain
+# - Desert gold text for warm, readable content
+#
+colors = ["#d4812f", "#89c4cc", "#1a3840", "#0d1f26", "#c9a870"]
+# [0] Warm Amber    - Primary highlights, titles, accents
+# [1] Muted Teal    - Data lines, charts, secondary highlights
+# [2] Deep Ocean    - Containers, expander backgrounds
+# [3] Midnight Navy - Secondary backgrounds, depth layers
+# [4] Desert Gold   - Text, borders, readability
+
+# ===== ARCHIVED COLOR SCHEMES =====
+# Blade Runner 2049 color palette
+# colors =   ["#a30502", "#f78b04", "#2b1718", "#153a42","#027f93" ]
+
+# Cyberpunk
+# colors = ["#FF6F61", "#FFB400", "#00FFFF", "#008B8B", "#00CED1"]
+
+# Cyberpunk 2
+# colors = ["#F887FF", "#DE004E", "#860029", "#321450", "#29132E"]
+
+# Cyberpunk 3
+# colors = ["#ff6e27", "#fbf665", "#73fffe", "#6287f8", "#383e65"]
+
+# Cyberpunk 4
+#colors = ["#63345E", "#ac61b9", "#b7c1de", "#0b468c", "#092047"]
+
+# Cyberpunk 5
+# colors = ["#a0ffe3", "#65dc98", "#8d8980", "#575267", "#222035" ]
+
+# Cyberpunk 6 (Best one yet)
+# colors = ["#8f704b", "#daae6d", "#89e3f6", "#4d9e9b", "#44786a"]
+
+# Cyberpunk 7
+# colors = ["#ff184c", "#ff577d", "#ffccdc", "#0a9cf5", "#003062"]
+
+# Neo-Tokyo Nights Custom CSS Styling
+st.markdown(f"""
+    <style>
+    /* Main background - deep black for cinematic depth */
+    .stApp {{
+        background-color: #000000;
+        color: {colors[4]};
+    }}
+
+    /* Title styling with subtle warm glow */
+    h1 {{
+        color: {colors[0]} !important;
+        font-family: 'Arial', sans-serif;
+        font-weight: bold;
+        text-shadow: 0 0 20px {colors[0]}40;
+    }}
+
+    /* Subtitle styling - warm tones */
+    h2 {{
+        color: {colors[0]} !important;
+        font-family: 'Arial', sans-serif;
+        text-shadow: 0 0 15px {colors[0]}30;
+    }}
+
+    h3 {{
+        color: {colors[4]} !important;
+        font-family: 'Arial', sans-serif;
+    }}
+
+    h4 {{
+        color: {colors[1]} !important;
+        font-family: 'Arial', sans-serif;
+        font-weight: 600;
+    }}
+
+    /* Expander styling with depth layers */
+    .streamlit-expanderHeader {{
+        background-color: {colors[2]} !important;
+        color: {colors[0]} !important;
+        border: 1px solid {colors[1]} !important;
+        border-radius: 4px;
+    }}
+
+    .streamlit-expanderContent {{
+        background-color: {colors[3]} !important;
+        border: 1px solid {colors[2]} !important;
+        color: {colors[4]} !important;
+    }}
+
+    /* Markdown text - warm desert gold for readability */
+    p, li, .stMarkdown {{
+        color: {colors[4]} !important;
+    }}
+
+    /* Table styling with layered depth */
+    table {{
+        background-color: {colors[3]} !important;
+        color: {colors[4]} !important;
+    }}
+
+    table th {{
+        background-color: {colors[2]} !important;
+        color: {colors[0]} !important;
+        border: 1px solid {colors[1]} !important;
+        font-weight: bold;
+    }}
+
+    table td {{
+        border: 1px solid {colors[2]} !important;
+        color: {colors[4]} !important;
+    }}
+
+    /* Horizontal rule with gradient glow */
+    hr {{
+        border: none;
+        height: 2px;
+        background: linear-gradient(90deg, {colors[0]}, {colors[1]}, {colors[0]});
+        box-shadow: 0 0 15px {colors[1]}60;
+        margin: 2rem 0;
+    }}
+
+    /* Links with warm amber highlights */
+    a {{
+        color: {colors[0]} !important;
+        text-shadow: 0 0 8px {colors[0]}50;
+        transition: all 0.3s ease;
+    }}
+
+    a:hover {{
+        color: {colors[1]} !important;
+        text-shadow: 0 0 12px {colors[1]}70;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
 st.title("The Sub-3:30 Protocol: A 6-Race Journey from Sub-5")
 st.subheader("A Data-Driven Analysis of Marathon Progression (2022 – 2025)")
 
@@ -18,54 +154,6 @@ st.markdown("<hr>", unsafe_allow_html=True)
 # Load datasets
 activities_df = pd.read_csv("activities_dataset.csv")
 challenges_df = pd.read_csv("global_challenges.csv")
-
-with st.expander("### Project Overview", expanded = False):
-	st.markdown(
-	"""
-	This dashboard analyzes **347 running activities over 3.5 years**, documenting the progression from a first-time marathoner (4:46:07 at Royal Victoria Marathon 2022) to a sub-3:30 finisher (3:26:00 at Royal Victoria Marathon 2025) — an improvement of **80 minutes** across 6 marathon races.
-	The analysis explores how training patterns, physiological adaptations, and race execution evolved to produce consistent performance gains at two recurring races: the **Royal Victoria Marathon** (4 finishes) and **BMO Vancouver Marathon** (2 finishes).
-	"""
-	)
-
-with st.expander("### Datasets", expanded = False):
-	st.markdown(
-	"""
-	The dataset is sourced from a complete Strava activity export containing 449 total activities. For this analysis, we filter exclusively to **running activities (347 runs)** spanning February 2022 to October 2025.
-
-	**Key columns extracted:**
-	- **Activity metadata:** ID, Date, Name, Type
-	- **Performance metrics:** Distance, Speed, Pace, Moving Time
-	- **Physiological data:** Heart Rate (average/max)
-	- **Terrain data:** Elevation Gain/Loss, High/Low points
-	- **Effort indicators:** Calories, Relative Effort
-
-	*Note: Heart rate data is unavailable for the first 20 runs (Feb–Jun 2022) due to the absence of a heart rate monitor during that period.*
-	""")
-
-with st.expander("### Marathons Race Summary and Official Times", expanded = False):
-	st.markdown(
-	"""
-	| Race | Date | Finish Time | Pace |
-	|------|------|-------------|------|
-	| Royal Victoria Marathon 2022 | Oct 9, 2022 | 4:46:07 | 6:30/km |
-	| BMO Vancouver Marathon 2023 | May 7, 2023 | 4:25:48 | 6:13/km |
-	| Royal Victoria Marathon 2023 | Oct 8, 2023 | 4:16:58 | 6:04/km |
-	| Royal Victoria Marathon 2024 | Oct 13, 2024 | 3:47:47 | 5:22/km |
-	| BMO Vancouver Marathon 2025 | May 4, 2025 | 3:37:23 | 5:07/km |
-	| Royal Victoria Marathon 2025 | Oct 12, 2025 | 3:26:00 | 4:50/km |
-
-	"""
-)
-
-with st.expander("### Link to Github Repository and Jupyter Notebook", expanded = False):
-	st.markdown(
-	"""
-	- **GitHub Repository:** https://github.com/adi-padmarajan/Endurance-Analytics-Dashboard
-	- **Jupyter Notebook:** https://github.com/adi-padmarajan/Endurance-Analytics-Dashboard/blob/main/endurance_analytics.ipynb
-	"""
-	)
-
-st.markdown("<hr>", unsafe_allow_html=True)
 
 # Prepare Heart Rate Data
 # Filter out race distances (marathons > 40km) and ensure HR data exists
@@ -101,13 +189,13 @@ with col1:
     # Create Plotly figure
     fig1 = go.Figure()
 
-    # Add line trace with markers (Blue color)
+    # Add line trace with markers (Warm Amber with Teal accents)
     fig1.add_trace(go.Scatter(
         x=races,
         y=times_minutes,
         mode='lines+markers',
-        marker=dict(size=10, color='#3B82F6'),  
-        line=dict(width=2.5, color='#3B82F6'),
+        marker=dict(size=12, color=colors[0], line=dict(color=colors[1], width=2)),
+        line=dict(width=3, color=colors[0]),
         hovertemplate="<b>%{x}</b><br>Time: %{customdata}<extra></extra>",
         customdata=times_labels
     ))
@@ -115,38 +203,38 @@ with col1:
     # Update layout with inverted y-axis and H:M:S tick labels
     fig1.update_layout(
         xaxis=dict(
-            title=dict(text="Race", font=dict(size=14, color='#334155', family='Arial')),
-            tickfont=dict(size=12, color='#475569'),
+            title=dict(text="Race", font=dict(size=14, color=colors[0], family='Arial')),
+            tickfont=dict(size=12, color=colors[4]),
             showgrid=True,
-            gridcolor='rgba(148, 163, 184, 0.15)',
+            gridcolor=f'rgba(137, 196, 204, 0.15)',
             showline=True,
-            linecolor='rgba(148, 163, 184, 0.3)',
+            linecolor=colors[1],
             linewidth=1
         ),
         yaxis=dict(
-            title=dict(text="Finish Time (H:M:S)", font=dict(size=14, color='#334155', family='Arial')),
+            title=dict(text="Finish Time (H:M:S)", font=dict(size=14, color=colors[0], family='Arial')),
             tickvals=times_minutes,
             ticktext=times_labels,
             autorange="reversed",
-            tickfont=dict(size=12, color='#475569'),
+            tickfont=dict(size=12, color=colors[4]),
             showgrid=True,
-            gridcolor='rgba(148, 163, 184, 0.15)',
+            gridcolor=f'rgba(137, 196, 204, 0.15)',
             showline=True,
-            linecolor='rgba(148, 163, 184, 0.3)',
+            linecolor=colors[1],
             linewidth=1
         ),
         height=400,
         margin=dict(l=70, r=30, t=30, b=60),
         hovermode='x unified',
-        plot_bgcolor='black',
-        paper_bgcolor='black',
-        font=dict(family='Arial', color='#334155'),
+        plot_bgcolor="black",
+        paper_bgcolor="black",
+        font=dict(family='Arial', color=colors[0]),
         hoverlabel=dict(
-            bgcolor='white',
+            bgcolor="#0d1f26",
             font_size=13,
             font_family='Arial',
-            bordercolor='#3B82F6',
-			font_color = 'black'
+            bordercolor=colors[1],
+			font_color=colors[4]
         )
     )
 
@@ -166,52 +254,52 @@ with col2:
     # Create Plotly figure for pace chart
     fig2 = go.Figure()
 
-    # Add line trace with markers (Green color)
+    # Add line trace with markers (Muted Teal with depth)
     fig2.add_trace(go.Scatter(
         x=races,
         y=pace_decimal,
         mode='lines+markers',
-        marker=dict(size=10, color='#10B981'),  # Green markers
-        line=dict(width=2.5, color='#10B981'),  # Green line
-        hovertemplate="<span style = \"color: black\"><b>%{x}</b><br>Pace: %{customdata}/km</span> <extra></extra>",
+        marker=dict(size=12, color=colors[1], line=dict(color=colors[0], width=2)),
+        line=dict(width=3, color=colors[1]),
+        hovertemplate="<b>%{x}</b><br>Pace: %{customdata}/km<extra></extra>",
         customdata=pace_labels
     ))
 
     # Update layout with inverted y-axis and pace labels
     fig2.update_layout(
         xaxis=dict(
-            title=dict(text="Race", font=dict(size=14, color='#334155', family='Arial')),
-            tickfont=dict(size=12, color='#475569'),
+            title=dict(text="Race", font=dict(size=14, color=colors[0], family='Arial')),
+            tickfont=dict(size=12, color=colors[4]),
             showgrid=True,
-            gridcolor='rgba(148, 163, 184, 0.15)',
+            gridcolor=f'rgba(137, 196, 204, 0.15)',
             showline=True,
-            linecolor='rgba(148, 163, 184, 0.3)',
+            linecolor=colors[1],
             linewidth=1
         ),
         yaxis=dict(
-            title=dict(text="Pace (min/km)", font=dict(size=14, color='#334155', family='Arial')),
-            tickvals=pace_decimal,      # Tick positions
-            ticktext=pace_labels,       # Display M:SS labels
-            autorange="reversed",       # INVERTED: Faster pace (lower number) at top
-            tickfont=dict(size=12, color='#475569'),
+            title=dict(text="Pace (min/km)", font=dict(size=14, color=colors[0], family='Arial')),
+            tickvals=pace_decimal,
+            ticktext=pace_labels,
+            autorange="reversed",
+            tickfont=dict(size=12, color=colors[4]),
             showgrid=True,
-            gridcolor='rgba(148, 163, 184, 0.15)',
+            gridcolor=f'rgba(137, 196, 204, 0.15)',
             showline=True,
-            linecolor='rgba(148, 163, 184, 0.3)',
+            linecolor=colors[1],
             linewidth=1
         ),
         height=400,
         margin=dict(l=70, r=30, t=30, b=60),
         hovermode='x unified',
-        plot_bgcolor='black',
-        paper_bgcolor='black',
-        font=dict(family='Arial', color='#334155'),
+        plot_bgcolor="black",
+        paper_bgcolor="black",
+        font=dict(family='Arial', color=colors[0]),
         hoverlabel=dict(
-            bgcolor='white',
+            bgcolor="#0d1f26",
             font_size=13,
             font_family='Arial',
-            bordercolor='#10B981',
-			font_color = 'black'
+            bordercolor=colors[1],
+			font_color=colors[4]
         )
     )
 
@@ -238,8 +326,8 @@ with col3:
     distances = yearly_summary['Total Distance (km)'].tolist()
     run_counts = yearly_summary['Number of Runs'].tolist()
 
-    # Color Gradient (Purple)
-    colors = ['#d896ff', '#be29ec', '#800080', '#660066']
+    # Color Gradient (Neo-Tokyo - from teal to warm amber)
+    bar_colors = [colors[1], colors[2], colors[4], colors[0]]
 
     # Create Plotly figure
     fig3 = go.Figure()
@@ -249,46 +337,46 @@ with col3:
         x=years,
         y=distances,
         marker=dict(
-            color=colors,
-            line=dict(color = "white", width=0.5)
+            color=bar_colors
         ),
         text=[f"{dist:.0f} km" for dist, runs in zip(distances, run_counts)],
         textposition='inside',
-        insidetextanchor="middle", # Vertical Centering
-        textfont=dict(size=11, color='white', family='Arial'),
-        hovertemplate="<span style = \"color: black\"><b>%{x}</b><br>Distance: %{y:.0f} km</span> <br> <span style = \"color: black\"> Runs: %{customdata}</span> <extra></extra>",
+        insidetextanchor="middle",
+        textfont=dict(size=11, color="#000000", family='Arial', weight='bold'),
+        hovertemplate="<b>%{x}</b><br>Distance: %{y:.0f} km<br>Runs: %{customdata}<extra></extra>",
         customdata=run_counts
     ))
 
     # Update layout
     fig3.update_layout(
         xaxis=dict(
-            title=dict(text="Year", font=dict(size=14, color='#334155', family='Arial')),
-            tickfont=dict(size=12, color='#475569'),
+            title=dict(text="Year", font=dict(size=14, color=colors[0], family='Arial')),
+            tickfont=dict(size=12, color=colors[4]),
             showgrid=False,
             showline=True,
-            linecolor='rgba(148, 163, 184, 0.3)',
+            linecolor=colors[1],
             linewidth=1
         ),
         yaxis=dict(
-            title=dict(text="Total Distance (km)", font=dict(size=14, color='#334155', family='Arial')),
-            tickfont=dict(size=12, color='#475569'),
+            title=dict(text="Total Distance (km)", font=dict(size=14, color=colors[0], family='Arial')),
+            tickfont=dict(size=12, color=colors[4]),
             showgrid=True,
-            gridcolor='rgba(148, 163, 184, 0.15)',
+            gridcolor=f'rgba(137, 196, 204, 0.15)',
             showline=True,
-            linecolor='rgba(148, 163, 184, 0.3)',
+            linecolor=colors[1],
             linewidth=1
         ),
         height=400,
         margin=dict(l=70, r=30, t=30, b=60),
-        plot_bgcolor='black',
-        paper_bgcolor='black',
-        font=dict(family='Arial', color='#334155'),
+        plot_bgcolor="black",
+        paper_bgcolor="black",
+        font=dict(family='Arial', color=colors[0]),
         hoverlabel=dict(
-            bgcolor='white',
+            bgcolor="#0d1f26",
             font_size=13,
             font_family='Arial',
-            bordercolor='#2E7D32'
+            bordercolor=colors[1],
+            font_color=colors[4]
         ),
         showlegend=False
     )
@@ -333,12 +421,11 @@ for i, year in enumerate(years):
                 size=10,
                 color=subset["Avg HR (bpm)"],
                 colorscale=[
-                    [0.0, '#fee5d9'],   # Light orange (low HR)
-                    [0.2, '#fcbba1'],   # Light red-orange
-                    [0.4, '#fc9272'],   # Medium orange-red
-                    [0.6, '#fb6a4a'],   # Red-orange
-                    [0.8, '#de2d26'],   # Red
-                    [1.0, '#a50f15']    # Dark red (high HR)
+                    [0.0, colors[1]],   # Muted Teal (low HR)
+                    [0.25, colors[4]],  # Desert Gold
+                    [0.5, colors[0]],   # Warm Amber
+                    [0.75, '#d65f2c'],  # Deeper Amber
+                    [1.0, '#a83c1a']    # Burnt Amber (high HR)
                 ],
                 cmin=hr_min,
                 cmax=hr_max,
@@ -346,64 +433,66 @@ for i, year in enumerate(years):
                 colorbar=dict(
                     title=dict(
                         text="Avg HR<br>(bpm)",
-                        font=dict(size=11, color='#334155', family='Arial')
+                        font=dict(size=11, color=colors[0], family='Arial')
                     ),
                     titleside="right",
                     thickness=12,
                     len=0.85,
                     x=1.02,
                     xpad=5,
-                    tickfont=dict(size=10, color='#475569'),
-                    outlinewidth=0
+                    tickfont=dict(size=10, color=colors[4]),
+                    outlinewidth=1,
+                    outlinecolor=colors[1],
+                    bgcolor="#0d1f26"
                 ),
-                line=dict(color='white', width=0.5),
-                opacity=0.7
+                line=dict(color=colors[1], width=1),
+                opacity=0.85
             ),
-            hovertemplate="<span style='color: black'><b>Pace:</b> %{x:.2f} min/km<br><b>HR:</b> %{y:.0f} bpm</span><extra></extra>"
+            hovertemplate="<b>Pace:</b> %{x:.2f} min/km<br><b>HR:</b> %{y:.0f} bpm<extra></extra>"
         ))
 
-        # Update layout to match notebook style
+        # Update layout with Neo-Tokyo styling
         fig_hr.update_layout(
             xaxis=dict(
                 title=dict(
                     text="Pace (min/km)",
-                    font=dict(size=12, color='#334155', family='Arial')
+                    font=dict(size=12, color=colors[0], family='Arial')
                 ),
-                tickfont=dict(size=10, color='#475569'),
+                tickfont=dict(size=10, color=colors[4]),
                 showgrid=True,
-                gridcolor='rgba(100, 100, 100, 0.2)',
+                gridcolor=f'rgba(137, 196, 204, 0.12)',
                 gridwidth=1,
                 showline=True,
-                linecolor='rgba(100, 100, 100, 0.3)',
+                linecolor=colors[1],
                 linewidth=1.5,
-                autorange="reversed",  # Inverted: faster pace (lower values) on left
+                autorange="reversed",
                 zeroline=False
             ),
             yaxis=dict(
                 title=dict(
                     text="Avg HR (bpm)",
-                    font=dict(size=12, color='#334155', family='Arial')
+                    font=dict(size=12, color=colors[0], family='Arial')
                 ),
-                tickfont=dict(size=10, color='#475569'),
+                tickfont=dict(size=10, color=colors[4]),
                 showgrid=True,
-                gridcolor='rgba(100, 100, 100, 0.2)',
+                gridcolor=f'rgba(137, 196, 204, 0.12)',
                 gridwidth=1,
                 showline=True,
-                linecolor='rgba(100, 100, 100, 0.3)',
+                linecolor=colors[1],
                 linewidth=1.5,
                 zeroline=False
             ),
             height=380,
             margin=dict(l=70, r=90, t=20, b=60),
-            plot_bgcolor='black',
-            paper_bgcolor='black',
-            font=dict(family='Arial', color='#334155'),
+            plot_bgcolor="black",
+            paper_bgcolor="black",
+            font=dict(family='Arial', color=colors[0]),
             hoverlabel=dict(
-                bgcolor='white',
+                bgcolor="#0d1f26",
                 font_size=11,
                 font_family='Arial',
-                bordercolor='#fb6a4a',
-                font_color='black'
+                bordercolor=colors[1],
+                font_color=colors[4]
             )
         )
 
@@ -412,10 +501,10 @@ for i, year in enumerate(years):
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(
-    """
-    <div style='text-align: center; color: #64748b; font-size: 0.85rem;'>
-        Built by <strong>Aditya Padmarajan</strong> • Data from Strava • 2022-2025
+    f"""
+    <div style='text-align: center; color: {colors[4]}; font-size: 0.85rem; text-shadow: 0 0 8px {colors[4]}30;'>
+        Built by <strong style='color: {colors[0]};'>Aditya Padmarajan</strong> • Data from Strava • 2022-2025
     </div>
-    """, 
+    """,
     unsafe_allow_html=True
 )
