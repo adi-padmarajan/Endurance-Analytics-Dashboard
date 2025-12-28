@@ -2,9 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
-import folium
-from streamlit_folium import st_folium
-from gpx_utils import parse_activity_file, get_center_point
+from gpx_utils import parse_activity_file
 
 # Page configuration for a wide layout
 st.set_page_config(
@@ -437,55 +435,24 @@ elif page == "Heart Rate Analysis":
 # ===== PAGE: ROUTE VISUALIZATION =====
 elif page == "Route Visualization":
     st.title("Marathon Route Visualization")
-    st.markdown("*2025 Marathon Routes*")
+    st.markdown("*Marathon Routes*")
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
     # BMO 2025 Map
-    st.markdown("### BMO Vancouver Marathon 2025 (3:37:23)")
+    st.markdown("### BMO Vancouver Marathon")
 
     try:
         trackpoints_bmo = parse_activity_file("activities/15342430162.tcx.gz")
         if trackpoints_bmo:
-            coords_bmo = [(lat, lon) for lat, lon, _, _ in trackpoints_bmo]
-            center_bmo = get_center_point(trackpoints_bmo)
-
-            map_bmo = folium.Map(
-                location=center_bmo,
-                zoom_start=12,
-                tiles='CartoDB dark_matter'
+            # Create DataFrame for st.map
+            df_bmo = pd.DataFrame(
+                [(lat, lon) for lat, lon, _, _ in trackpoints_bmo],
+                columns=['lat', 'lon']
             )
 
-            folium.PolyLine(
-                coords_bmo,
-                color='#b957ff',
-                weight=4,
-                opacity=0.8
-            ).add_to(map_bmo)
-
-            folium.CircleMarker(
-                location=coords_bmo[0],
-                radius=8,
-                color='#51cf66',
-                fill=True,
-                fillColor='#51cf66',
-                fillOpacity=1.0,
-                popup="START",
-                tooltip="START"
-            ).add_to(map_bmo)
-
-            folium.CircleMarker(
-                location=coords_bmo[-1],
-                radius=8,
-                color='#51cf66',
-                fill=True,
-                fillColor='white',
-                fillOpacity=1.0,
-                popup="FINISH",
-                tooltip="FINISH"
-            ).add_to(map_bmo)
-
-            st_folium(map_bmo, width=None, height=600, key="bmo_map", use_container_width=True)
+            # Display the map with green color
+            st.map(df_bmo, color='#51cf66', size=20, zoom=11, use_container_width=True)
         else:
             st.error("Could not load BMO 2025 route")
     except Exception as e:
@@ -494,50 +461,19 @@ elif page == "Route Visualization":
     st.markdown("<br>", unsafe_allow_html=True)
 
     # RVM 2025 Map
-    st.markdown("### Royal Victoria Marathon 2025 (3:26:00) - PB")
+    st.markdown("### Royal Victoria Marathon")
 
     try:
         trackpoints_rvm = parse_activity_file("activities/17205422180.fit.gz")
         if trackpoints_rvm:
-            coords_rvm = [(lat, lon) for lat, lon, _, _ in trackpoints_rvm]
-            center_rvm = get_center_point(trackpoints_rvm)
-
-            map_rvm = folium.Map(
-                location=center_rvm,
-                zoom_start=13,
-                tiles='CartoDB dark_matter'
+            # Create DataFrame for st.map
+            df_rvm = pd.DataFrame(
+                [(lat, lon) for lat, lon, _, _ in trackpoints_rvm],
+                columns=['lat', 'lon']
             )
 
-            folium.PolyLine(
-                coords_rvm,
-                color='#00d9ff',
-                weight=4,
-                opacity=0.8
-            ).add_to(map_rvm)
-
-            folium.CircleMarker(
-                location=coords_rvm[0],
-                radius=8,
-                color='#00d9ff',
-                fill=True,
-                fillColor='#00d9ff',
-                fillOpacity=1.0,
-                popup="START",
-                tooltip="START"
-            ).add_to(map_rvm)
-
-            folium.CircleMarker(
-                location=coords_rvm[-1],
-                radius=8,
-                color='#00d9ff',
-                fill=True,
-                fillColor='white',
-                fillOpacity=1.0,
-                popup="FINISH",
-                tooltip="FINISH"
-            ).add_to(map_rvm)
-
-            st_folium(map_rvm, width=None, height=600, key="rvm_map", use_container_width=True)
+            # Display the map with electric cyan color
+            st.map(df_rvm, color='#00d9ff', size=20, zoom=13, use_container_width=True)
         else:
             st.error("Could not load RVM 2025 route")
     except Exception as e:
