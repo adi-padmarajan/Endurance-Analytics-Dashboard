@@ -78,7 +78,7 @@ def render(colors):
                 0 10px 35px rgba(56, 189, 248, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             transition: transform 0.3s ease;
-            height: 100%;
+            max-height: 200px
         '>
         <h2 style='
             color: #38bdf8;
@@ -109,7 +109,7 @@ def render(colors):
             box-shadow:
                 0 10px 35px rgba(185, 87, 255, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            height: 100%;
+            max-height: 200px
         '>
         <h2 style='
             color: #b957ff;
@@ -140,7 +140,8 @@ def render(colors):
             box-shadow:
                 0 10px 35px rgba(0, 255, 159, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            height: 100%;
+            max-height: 200px;
+            overflow: hidden;
         '>
         <h2 style='
             color: #00ff9f;
@@ -152,9 +153,10 @@ def render(colors):
         <p style='
             color: #94a3b8;
             margin: 12px 0 0 0;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
         '>Kilometers Logged</p>
         </div>
         """, unsafe_allow_html=True)
@@ -171,7 +173,7 @@ def render(colors):
             box-shadow:
                 0 10px 35px rgba(81, 207, 102, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            height: 100%;
+            max-height: 200px;       
         '>
         <h2 style='
             color: #51cf66;
@@ -278,7 +280,9 @@ def render(colors):
             padding: 28px;
             border-left: 5px solid #38bdf8;
             box-shadow: 0 6px 25px rgba(56, 189, 248, 0.2);
-            min-height: 360px;
+            min-height: 450px;
+            max-height: 450px;
+            overflow: hidden;
         ">
             <h3 style='
                 color: #38bdf8;
@@ -311,7 +315,9 @@ def render(colors):
             padding: 28px;
             border-left: 5px solid #b957ff;
             box-shadow: 0 6px 25px rgba(185, 87, 255, 0.2);
-            min-height: 360px;
+            min-height: 450px;
+            max-height: 450px;
+            overflow: hidden;
         ">
             <h3 style='
                 color: #b957ff;
@@ -344,7 +350,9 @@ def render(colors):
             padding: 28px;
             border-left: 5px solid #00ff9f;
             box-shadow: 0 6px 25px rgba(0, 255, 159, 0.2);
-            min-height: 360px;
+            min-height: 450px;
+            max-height: 450px;
+            overflow: hidden;
         ">
             <h3 style='
                 color: #00ff9f;
@@ -606,6 +614,8 @@ def render(colors):
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(56, 189, 248, 0.25);
             min-height: 275px;
+            max-height: 275px;
+            overflow: hidden;
             transition: transform 0.3s ease;
         '>
         <h3 style='
@@ -635,6 +645,8 @@ def render(colors):
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(185, 87, 255, 0.25);
             min-height: 275px;
+            max-height: 275px;
+            overflow: hidden;
         '>
         <h3 style='
             color: #b957ff;
@@ -663,6 +675,8 @@ def render(colors):
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(0, 255, 159, 0.25);
             min-height: 275px;
+            max-height: 275px;
+            overflow: hidden;
         '>
         <h3 style='
             color: #00ff9f;
@@ -691,6 +705,8 @@ def render(colors):
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(81, 207, 102, 0.25);
             min-height: 275px;
+            max-height: 275px;
+            overflow: hidden;
         '>
         <h3 style='
             color: #51cf66;
