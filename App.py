@@ -28,7 +28,7 @@ with st.sidebar:
     # Navigation Menu
     page = st.radio(
         "Navigation",
-        ["Home", "Marathon Performance", "Heart Rate Analysis"],
+        ["Home", "Marathon Performance Metrics", "Training Metrics", "Heart Rate Analysis"],
         label_visibility="collapsed"
     )
 
@@ -59,7 +59,7 @@ if page == "Home":
     st.markdown(
         """
         <h1 style = "text-align: center;">The Sub-3:30 Protocol</h1>
-        <h3 style = "text-align: center;">A Data-Driven Journey from 4:46 to 3:26 Marathon</h3>
+        <h3 style = "text-align: center;">A Data-Driven Journey from a Sub 5-hour to a Sub 3:30 Marathon</h3>
         """,
         unsafe_allow_html=True
     )
@@ -84,7 +84,7 @@ if page == "Home":
 
     - **6 Marathons** completed between 2022-2025
     - **80 minutes** improvement in finish time
-    - **3400 Km+** logged across 3 years
+    - **3400 Km+** logged across 3.5 years
     - **Sub-5 Hour** debut at RVM 2022 (4:46:07)
     - **Sub-3:30** achieved at RVM 2025 (3:26:00)
 
@@ -100,7 +100,7 @@ if page == "Home":
 
 
 # PAGE: MARATHON PERFORMANCE 
-elif page == "Marathon Performance":
+elif page == "Marathon Performance Metrics":
     st.title("Marathon Performance Metrics")
     st.markdown("*Tracking progression across all 6 marathon races and annual training volume*")
 
@@ -235,7 +235,8 @@ elif page == "Marathon Performance":
     # Display the pace chart
     st.plotly_chart(fig2, use_container_width=True)
 
-    
+elif page == "Training Metrics":
+    st.title("Training Metrics")
     # Building the Base
     st.markdown("#### Annual Running Volume")
     st.markdown("*Total running distance per year*")
