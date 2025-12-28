@@ -40,9 +40,9 @@ with st.sidebar:
     st.markdown("<hr>", unsafe_allow_html=True)
 
 # Load datasets
-activities_df = pd.read_csv("activities_dataset.csv")
-challenges_df = pd.read_csv("global_challenges.csv")
-vo2max_df = pd.read_csv("VO₂ Max.csv", skiprows=1, names=['Month', 'Activity Type', 'VO2 Max'])
+activities_df = pd.read_csv("datasets/activities_dataset.csv")
+challenges_df = pd.read_csv("datasets/global_challenges.csv")
+vo2max_df = pd.read_csv("datasets/VO₂ Max.csv", skiprows=1, names=['Month', 'Activity Type', 'VO2 Max'])
 
 # Prepare Heart Rate Data
 # Filter out race distances (marathons > 40km) and ensure HR data exists
