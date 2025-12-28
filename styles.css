@@ -1,0 +1,211 @@
+/*
+
+ ===== ARCHIVED COLOR SCHEMES =====
+Blade Runner 2049 color palette
+colors =   ["#a30502", "#f78b04", "#2b1718", "#153a42","#027f93" ]
+
+Cyberpunk
+colors = ["#FF6F61", "#FFB400", "#00FFFF", "#008B8B", "#00CED1"]
+
+Cyberpunk 2
+colors = ["#F887FF", "#DE004E", "#860029", "#321450", "#29132E"]
+
+Cyberpunk 3
+colors = ["#ff6e27", "#fbf665", "#73fffe", "#6287f8", "#383e65"]
+
+Cyberpunk 4
+colors = ["#63345E", "#ac61b9", "#b7c1de", "#0b468c", "#092047"]
+
+Cyberpunk 5
+colors = ["#a0ffe3", "#65dc98", "#8d8980", "#575267", "#222035" ]
+
+Cyberpunk 6 (Best one yet)
+colors = ["#8f704b", "#daae6d", "#89e3f6", "#4d9e9b", "#44786a"]
+
+Cyberpunk 7
+colors = ["#ff184c", "#ff577d", "#ffccdc", "#0a9cf5", "#003062"]
+*/
+
+
+/* ===== CURATED CINEMATIC PALETTE: "Electric Dreams" =====
+    * Cyberpunk-inspired palette with electric blues and neon purples
+    * Optimized for visual impact, readability, and cinematic depth
+    *
+    * Color Philosophy:
+    * - Electric blue and neon purple for cyberpunk aesthetic
+    * - Deep purples and blues for immersive backgrounds
+    * - Cyan accents for that iconic cyberpunk glow
+    * - High contrast for cinematic punch while maintaining readability
+    *
+    * Color Variables:
+    * --electric-cyan: #00d9ff    - Primary highlights, titles, electric accents
+    * --neon-purple: #b957ff      - Data lines, charts, secondary highlights
+    * --deep-violet: #1a0d2e      - Containers, expander backgrounds
+    * --dark-abyss: #0a0420       - Secondary backgrounds, depth layers
+    * --ice-blue: #e0f4ff         - Text, borders, high readability
+ */
+
+:root {
+    --electric-cyan: #00d9ff;
+    --neon-purple: #b957ff;
+    --deep-violet: #1a0d2e;
+    --dark-abyss: #0a0420;
+    --ice-blue: #e0f4ff;
+}
+
+/* Main background - pure black for maximum contrast */
+.stApp {
+    background-color: #000000;
+    color: var(--ice-blue);
+}
+
+/* Title styling with electric cyan glow */
+h1 {
+    color: var(--electric-cyan) !important;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    text-shadow: 0 0 30px rgba(0, 217, 255, 0.5), 0 0 50px rgba(0, 217, 255, 0.31), 0 0 70px rgba(0, 217, 255, 0.19);
+}
+
+/* Subtitle styling - cyan with stronger glow */
+h2 {
+    color: var(--electric-cyan) !important;
+    font-family: 'Arial', sans-serif;
+    text-shadow: 0 0 25px rgba(0, 217, 255, 0.44), 0 0 40px rgba(0, 217, 255, 0.25);
+}
+
+h3 {
+    color: var(--ice-blue) !important;
+    font-family: 'Arial', sans-serif;
+    text-shadow: 0 0 15px rgba(224, 244, 255, 0.25);
+}
+
+h4 {
+    color: var(--neon-purple) !important;
+    font-family: 'Arial', sans-serif;
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(185, 87, 255, 0.38), 0 0 35px rgba(185, 87, 255, 0.19);
+}
+
+/* Expander styling with neon borders */
+.streamlit-expanderHeader {
+    background-color: var(--deep-violet) !important;
+    color: var(--electric-cyan) !important;
+    border: 2px solid var(--neon-purple) !important;
+    border-radius: 4px;
+    box-shadow: 0 0 15px rgba(185, 87, 255, 0.25), inset 0 0 10px rgba(185, 87, 255, 0.13);
+}
+
+.streamlit-expanderContent {
+    background-color: var(--dark-abyss) !important;
+    border: 1px solid rgba(185, 87, 255, 0.5) !important;
+    color: var(--ice-blue) !important;
+    box-shadow: inset 0 0 20px rgba(26, 13, 46, 0.38);
+}
+
+/* Markdown text - ice blue for high contrast readability */
+p, li, .stMarkdown {
+    color: var(--ice-blue) !important;
+}
+
+/* Table styling with cyberpunk borders */
+table {
+    background-color: var(--dark-abyss) !important;
+    color: var(--ice-blue) !important;
+    border: 1px solid rgba(185, 87, 255, 0.38) !important;
+}
+
+table th {
+    background-color: var(--deep-violet) !important;
+    color: var(--electric-cyan) !important;
+    border: 1px solid var(--neon-purple) !important;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.31);
+}
+
+table td {
+    border: 1px solid var(--deep-violet) !important;
+    color: var(--ice-blue) !important;
+}
+
+/* Horizontal rule with electric gradient glow */
+hr {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, var(--electric-cyan), var(--neon-purple), var(--electric-cyan));
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.44), 0 0 30px rgba(185, 87, 255, 0.38), 0 0 40px rgba(0, 217, 255, 0.25);
+    margin: 2rem 0;
+}
+
+/* Links with electric cyan highlights */
+a {
+    color: var(--electric-cyan) !important;
+    text-shadow: 0 0 12px rgba(0, 217, 255, 0.38);
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: var(--neon-purple) !important;
+    text-shadow: 0 0 18px rgba(185, 87, 255, 0.5), 0 0 25px rgba(185, 87, 255, 0.31);
+}
+
+/* Sidebar styling with cyberpunk theme */
+[data-testid="stSidebar"] {
+    background-color: var(--dark-abyss) !important;
+    border-right: 2px solid var(--neon-purple) !important;
+    box-shadow: 0 0 30px rgba(185, 87, 255, 0.19);
+}
+
+/* Sidebar title styling */
+[data-testid="stSidebar"] h1 {
+    color: var(--electric-cyan) !important;
+    text-shadow: 0 0 25px rgba(0, 217, 255, 0.44), 0 0 40px rgba(0, 217, 255, 0.25);
+}
+
+/* Sidebar radio buttons */
+[data-testid="stSidebar"] .stRadio > label {
+    color: var(--ice-blue) !important;
+    font-size: 1.1rem;
+}
+
+/* Radio button options */
+[data-testid="stSidebar"] [role="radiogroup"] label {
+    color: var(--ice-blue) !important;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Radio button hover effect */
+[data-testid="stSidebar"] [role="radiogroup"] label:hover {
+    background-color: var(--deep-violet) !important;
+    border-left: 3px solid var(--electric-cyan);
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.19);
+}
+
+/* Selected radio button */
+[data-testid="stSidebar"] [role="radiogroup"] label[data-baseweb="radio"] {
+    background-color: var(--deep-violet) !important;
+    border-left: 3px solid var(--neon-purple);
+    box-shadow: 0 0 20px rgba(185, 87, 255, 0.25), inset 0 0 10px rgba(185, 87, 255, 0.13);
+    color: var(--electric-cyan) !important;
+}
+
+/* Radio button circle */
+[data-testid="stSidebar"] [data-baseweb="radio"] > div {
+    border-color: var(--neon-purple) !important;
+}
+
+/* Radio button checked circle */
+[data-testid="stSidebar"] [data-baseweb="radio"] > div[data-checked="true"] {
+    background-color: var(--neon-purple) !important;
+    box-shadow: 0 0 10px rgba(185, 87, 255, 0.38);
+}
+
+/* Sidebar horizontal rules */
+[data-testid="stSidebar"] hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+    box-shadow: 0 0 15px rgba(185, 87, 255, 0.31);
+}
