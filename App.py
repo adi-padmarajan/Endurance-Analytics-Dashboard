@@ -33,7 +33,7 @@ with st.sidebar:
     # Navigation Menu
     page = st.radio(
         "Navigation",
-        ["Home", "Marathon Performance Metrics", "Training Metrics", "Heart Rate Analysis", "Route Visualization"],
+        ["Home", "Marathon Performance Metrics", "Training Metrics", "Heart Rate Analysis", "VO2 Max","Route Visualization", "Contact"],
         label_visibility="collapsed"
     )
 
