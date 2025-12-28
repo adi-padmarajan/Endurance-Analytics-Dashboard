@@ -77,6 +77,7 @@ elif page == "Route Visualization":
     route_visualization.render(colors)
 
 
+
 # Footer (displayed on all pages)
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown(

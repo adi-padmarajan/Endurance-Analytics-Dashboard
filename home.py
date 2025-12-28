@@ -49,17 +49,17 @@ def render(colors):
     # EXECUTIVE SUMMARY SECTION
     st.markdown("""
     <div style='margin-bottom: 32px;'>
-    <h2 style='
-        color: #38bdf8;
-        margin: 0 0 28px 0;
-        font-size: 2rem;
-        font-weight: 600;
-        text-align: center;
-        letter-spacing: 0.8px;
-        text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
-    '>
-        Executive Summary
-    </h2>
+        <h2 style='
+            color: #38bdf8;
+            margin: 0 0 28px 0;
+            font-size: 2rem;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 0.8px;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        '>
+            Executive Summary
+        </h2>
     </div>
     """, unsafe_allow_html=True)
 
@@ -78,22 +78,27 @@ def render(colors):
                 0 10px 35px rgba(56, 189, 248, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             transition: transform 0.3s ease;
-            max-height: 200px
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         '>
-        <h2 style='
-            color: #38bdf8;
-            margin: 0;
-            font-size: 3.2rem;
-            font-weight: 700;
-            text-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
-        '>80</h2>
-        <p style='
-            color: #94a3b8;
-            margin: 12px 0 0 0;
-            font-size: 1rem;
-            font-weight: 500;
-            letter-spacing: 0.8px;
-        '>Minutes Improved</p>
+            <h2 style='
+                color: #38bdf8;
+                margin: 0;
+                font-size: 3.2rem;
+                font-weight: 700;
+                line-height: 1;
+                text-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
+            '>80</h2>
+            <p style='
+                color: #94a3b8;
+                margin: 12px 0 0 0;
+                font-size: 1rem;
+                font-weight: 500;
+                letter-spacing: 0.8px;
+            '>Minutes Improved</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -109,22 +114,28 @@ def render(colors):
             box-shadow:
                 0 10px 35px rgba(185, 87, 255, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            max-height: 200px
+            transition: transform 0.3s ease;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         '>
-        <h2 style='
-            color: #b957ff;
-            margin: 0;
-            font-size: 3.2rem;
-            font-weight: 700;
-            text-shadow: 0 0 25px rgba(185, 87, 255, 0.7);
-        '>347</h2>
-        <p style='
-            color: #94a3b8;
-            margin: 12px 0 0 0;
-            font-size: 1rem;
-            font-weight: 500;
-            letter-spacing: 0.8px;
-        '>Training Runs</p>
+            <h2 style='
+                color: #b957ff;
+                margin: 0;
+                font-size: 3.2rem;
+                font-weight: 700;
+                line-height: 1;
+                text-shadow: 0 0 25px rgba(185, 87, 255, 0.7);
+            '>347</h2>
+            <p style='
+                color: #94a3b8;
+                margin: 12px 0 0 0;
+                font-size: 1rem;
+                font-weight: 500;
+                letter-spacing: 0.8px;
+            '>Training Runs</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -140,24 +151,28 @@ def render(colors):
             box-shadow:
                 0 10px 35px rgba(0, 255, 159, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            max-height: 200px;
-            overflow: hidden;
+            transition: transform 0.3s ease;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         '>
-        <h2 style='
-            color: #00ff9f;
-            margin: 0;
-            font-size: 3.2rem;
-            font-weight: 700;
-            text-shadow: 0 0 25px rgba(0, 255, 159, 0.7);
-        '>3,400+</h2>
-        <p style='
-            color: #94a3b8;
-            margin: 12px 0 0 0;
-            font-size: 0.95rem;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        '>Kilometers Logged</p>
+            <h2 style='
+                color: #00ff9f;
+                margin: 0;
+                font-size: 3.2rem;
+                font-weight: 700;
+                line-height: 1;
+                text-shadow: 0 0 25px rgba(0, 255, 159, 0.7);
+            '>3400 +</h2>
+            <p style='
+                color: #94a3b8;
+                margin: 12px 0 0 0;
+                font-size: 1rem;
+                font-weight: 500;
+                letter-spacing: 0.8px;
+            '>Kilometers Logged</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -173,22 +188,28 @@ def render(colors):
             box-shadow:
                 0 10px 35px rgba(81, 207, 102, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            max-height: 200px;       
+            transition: transform 0.3s ease;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         '>
-        <h2 style='
-            color: #51cf66;
-            margin: 0;
-            font-size: 3.2rem;
-            font-weight: 700;
-            text-shadow: 0 0 25px rgba(81, 207, 102, 0.7);
-        '>3.5</h2>
-        <p style='
-            color: #94a3b8;
-            margin: 12px 0 0 0;
-            font-size: 1rem;
-            font-weight: 500;
-            letter-spacing: 0.8px;
-        '>Years of Training</p>
+            <h2 style='
+                color: #51cf66;
+                margin: 0;
+                font-size: 3.2rem;
+                font-weight: 700;
+                line-height: 1;
+                text-shadow: 0 0 25px rgba(81, 207, 102, 0.7);
+            '>3.5</h2>
+            <p style='
+                color: #94a3b8;
+                margin: 12px 0 0 0;
+                font-size: 1rem;
+                font-weight: 500;
+                letter-spacing: 0.8px;
+            '>Years of Training</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -729,43 +750,7 @@ def render(colors):
     # SECTION SPACING
     st.markdown("<div style='height: 48px;'></div>", unsafe_allow_html=True)
 
-    # TECHNICAL IMPLEMENTATION EXPANDER
-    with st.expander("Technical Implementation - Technologies & Tools Used", expanded=False):
-        st.markdown("""
-        <div style="
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.7), rgba(2, 6, 23, 0.8));
-            border-radius: 14px;
-            padding: 24px;
-            border-left: 4px solid #51cf66;
-        ">
-        """, unsafe_allow_html=True)
-
-        tech_col1, tech_col2 = st.columns(2)
-
-        with tech_col1:
-            st.markdown("""
-            **Data Processing & Analysis**
-            - **Python**: Core data processing and analysis
-            - **Pandas & NumPy**: Data manipulation and statistical analysis
-            - **GPX/TCX/FIT Parsing**: Custom parsers for GPS activity files
-            - **Geospatial Analysis**: Haversine distance calculations, route processing
-            """)
-
-        with tech_col2:
-            st.markdown("""
-            **Visualization & Dashboard**
-            - **Streamlit**: Interactive web dashboard framework
-            - **Plotly**: Dynamic, interactive data visualizations
-            - **Custom CSS**: Modern gradient-themed design system
-            - **Responsive Design**: Multi-column layouts, optimized UX
-            """)
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # SECTION SPACING
-    st.markdown("<div style='height: 48px;'></div>", unsafe_allow_html=True)
-
-    # CALL TO ACTION - NO EMOJI
+    # CALL TO ACTION 
     st.markdown("""
     <div style='
         text-align: center;
