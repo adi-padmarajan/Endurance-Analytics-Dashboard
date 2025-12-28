@@ -80,3 +80,5 @@ def render(colors, activities_df):
     )
 
     st.plotly_chart(fig3, use_container_width=True)
+
+    
