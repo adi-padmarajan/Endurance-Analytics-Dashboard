@@ -251,8 +251,13 @@ df_hr = df_hr.rename(columns={'Average Heart Rate': 'Avg HR (bpm)'})
 
 # ===== PAGE: HOME =====
 if page == "Home":
-    st.title("The Sub-3:30 Protocol")
-    st.subheader("A Data-Driven Analysis of Marathon Progression (2022 – 2025)")
+    st.markdown(
+        """
+        <h1 style = "text-align: center;">The Sub-3:30 Protocol</h1>
+        <h3 style = "text-align: center;">A Data-Driven Journey from 4:46 to 3:26 Marathon</h3>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -260,14 +265,22 @@ if page == "Home":
     #### Welcome to The Sub-3:30 Protocol
 
     This dashboard chronicles a remarkable 3-year journey of marathon progression, showcasing how
-    consistent training, data-driven decisions, and unwavering dedication transformed a 4:46 marathoner
+    consistent training, data-driven decisions, and unwavering dedication transformed a Sub 5-hour marathoner
     into a sub-3:30 athlete.
+                
+    #### Project Overview
+    
+    This project analyzes **347 running activities over 3.5 years**, documenting the progression from a first-time marathoner (4:46:07 at Royal Victoria Marathon 2022) 
+    to a sub-3:30 finisher (3:26:00 at Royal Victoria Marathon 2025) — an improvement of **80 minutes** across 6 marathon races.
+    The analysis explores how training patterns, physiological adaptations, and race execution evolved to produce consistent performance gains at two 
+    recurring races: the **Royal Victoria Marathon** (4 finishes) and **BMO Vancouver Marathon** (2 finishes).
 
     #### The Journey at a Glance
 
     - **6 Marathons** completed between 2022-2025
-    - **80+ minutes** improvement in finish time
-    - **1,600+ runs** logged across 4 years
+    - **80 minutes** improvement in finish time
+    - **3400 Km+** logged across 3 years
+    - **Sub-5 Hour** debut at RVM 2022 (4:46:07)
     - **Sub-3:30** achieved at RVM 2025 (3:26:00)
 
     #### Key Insights
