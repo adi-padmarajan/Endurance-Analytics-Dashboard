@@ -60,7 +60,7 @@ df_hr['Year'] = df_hr['Activity Date'].dt.year
 df_hr['Pace (min/km)'] = 1000 / (df_hr['Average Speed'] * 60)
 df_hr = df_hr.rename(columns={'Average Heart Rate': 'Avg HR (bpm)'})
 
-# ===== PAGE ROUTING =====
+# PAGE ROUTING 
 if page == "Home":
     home.render(colors)
 
