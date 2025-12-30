@@ -2,11 +2,12 @@ import streamlit as st
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
-import numpy as np
 
 
 def format_pace(pace_decimal):
     """Convert decimal pace (e.g., 5.5 min/km) to mm:ss format"""
+    if pace_decimal <= 0 or pd.isna(pace_decimal):
+        return "0:00"
     minutes = int(pace_decimal)
     seconds = int((pace_decimal - minutes) * 60)
     return f"{minutes}:{seconds:02d}"
@@ -16,11 +17,34 @@ def render(colors, df_hr):
     st.title("Heart Rate Efficiency Analysis")
     st.markdown("*Cardiovascular adaptation and aerobic development through Zone 2 training*")
 
+    # Validate required columns exist
+    required_columns = ['Year', 'Avg HR (bpm)', 'Pace (min/km)', 'Activity Date']
+    missing_columns = [col for col in required_columns if col not in df_hr.columns]
+
+    if missing_columns:
+        st.error(f"Missing required columns: {', '.join(missing_columns)}")
+        return
+
+    if len(df_hr) == 0:
+        st.warning("No heart rate data available for analysis.")
+        return
+
     # Filter data for the three key marathons: RVM 2024, BMO 2025, RVM 2025
     # We'll focus on training data from 2024 and 2025
     df_2024 = df_hr[df_hr['Year'] == 2024].copy()
     df_2025 = df_hr[df_hr['Year'] == 2025].copy()
     df_analysis = df_hr[df_hr['Year'].isin([2024, 2025])].copy()
+
+    # Check if we have data for analysis
+    if len(df_2024) == 0 and len(df_2025) == 0:
+        st.warning("No heart rate data available for 2024 or 2025. This analysis requires data from these years.")
+        return
+
+    # Display data availability notice
+    if len(df_2024) == 0:
+        st.info("ℹ️ Note: No 2024 data available. Analysis will focus on 2025 data only.")
+    elif len(df_2025) == 0:
+        st.info("ℹ️ Note: No 2025 data available. Analysis will focus on 2024 data only.")
 
     # Calculate key HR efficiency metrics
     avg_hr_2024 = df_2024['Avg HR (bpm)'].mean() if len(df_2024) > 0 else 0
@@ -33,8 +57,8 @@ def render(colors, df_hr):
     hr_efficiency_2025 = avg_hr_2025 / avg_pace_2025 if avg_pace_2025 > 0 else 0
     efficiency_improvement = ((hr_efficiency_2024 - hr_efficiency_2025) / hr_efficiency_2024) * 100 if hr_efficiency_2024 > 0 else 0
 
-    # Calculate Zone 2 percentages (60-70% of max HR = 114-133 bpm for 190 max)
-    max_hr = 190
+    # Calculate Zone 2 percentages (60-70% of max HR)
+    max_hr = 190  # Consistent max HR across all calculations
     zone2_lower = 0.60 * max_hr  # 114 bpm
     zone2_upper = 0.70 * max_hr  # 133 bpm
 
@@ -64,7 +88,7 @@ def render(colors, df_hr):
 
     with col2:
         pace_improvement = avg_pace_2024 - avg_pace_2025
-        pace_improvement_formatted = f"{int(pace_improvement)}:{int((pace_improvement - int(pace_improvement)) * 60):02d}"
+        pace_improvement_formatted = format_pace(abs(pace_improvement)) if pace_improvement != 0 else "0:00"
         st.markdown(f"""
         <div style='background: linear-gradient(135deg, #0a0420 0%, #1a0d2e 100%);
                     padding: 20px;
@@ -145,35 +169,6 @@ def render(colors, df_hr):
         text=[format_pace(p) + " /km" for p in df_2025['Pace (min/km)']]
     ))
 
-    # Add trend lines
-    if len(df_2024) > 1:
-        z_2024 = np.polyfit(df_2024['Pace (min/km)'], df_2024['Avg HR (bpm)'], 1)
-        p_2024 = np.poly1d(z_2024)
-        pace_range_2024 = np.linspace(df_2024['Pace (min/km)'].min(), df_2024['Pace (min/km)'].max(), 50)
-
-        fig_efficiency.add_trace(go.Scatter(
-            x=pace_range_2024,
-            y=p_2024(pace_range_2024),
-            mode='lines',
-            name='2024 Trend',
-            line=dict(color=colors[1], width=3, dash='dash'),
-            hovertemplate="<b>2024 Trend</b><extra></extra>"
-        ))
-
-    if len(df_2025) > 1:
-        z_2025 = np.polyfit(df_2025['Pace (min/km)'], df_2025['Avg HR (bpm)'], 1)
-        p_2025 = np.poly1d(z_2025)
-        pace_range_2025 = np.linspace(df_2025['Pace (min/km)'].min(), df_2025['Pace (min/km)'].max(), 50)
-
-        fig_efficiency.add_trace(go.Scatter(
-            x=pace_range_2025,
-            y=p_2025(pace_range_2025),
-            mode='lines',
-            name='2025 Trend',
-            line=dict(color=colors[0], width=3, dash='dash'),
-            hovertemplate="<b>2025 Trend</b><extra></extra>"
-        ))
-
     fig_efficiency.update_layout(
         height=550,
         plot_bgcolor="black",
@@ -222,10 +217,10 @@ def render(colors, df_hr):
             improved cardiovascular efficiency—the heart requires fewer beats to sustain the same running pace.
         </p>
         <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
-            The trend lines reveal the relationship between pace and heart rate for each year. Average heart rate decreased by
-            <strong>{hr_diff:.1f} bpm</strong> while average pace improved by <strong>{pace_improvement_text} /km</strong>,
-            resulting in a <strong>{efficiency_improvement:.1f}% efficiency improvement</strong>. This adaptation is primarily
-            driven by increased Zone 2 training volume in 2025, which enhanced aerobic base and mitochondrial density.
+            Average heart rate decreased by <strong>{hr_diff:.1f} bpm</strong> while average pace improved by
+            <strong>{pace_improvement_text} /km</strong>, resulting in a <strong>{efficiency_improvement:.1f}% efficiency improvement</strong>.
+            This adaptation is primarily driven by increased Zone 2 training volume in 2025, which enhanced aerobic base and
+            mitochondrial density.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -483,21 +478,6 @@ def render(colors, df_hr):
         hovertemplate="<b>%{x}</b><br>Efficiency: %{y:.2f}<extra></extra>"
     ))
 
-    # Add trend line
-    if len(monthly_efficiency) > 1:
-        x_numeric = np.arange(len(monthly_efficiency))
-        z = np.polyfit(x_numeric, monthly_efficiency['Efficiency'], 1)
-        p = np.poly1d(z)
-
-        fig_eff_metric.add_trace(go.Scatter(
-            x=monthly_efficiency['Year-Month'],
-            y=p(x_numeric),
-            mode='lines',
-            name='Trend',
-            line=dict(color='#00ff9f', width=2, dash='dash'),
-            hovertemplate="<b>Trend</b><extra></extra>"
-        ))
-
     fig_eff_metric.update_layout(
         height=500,
         plot_bgcolor="black",
@@ -546,7 +526,7 @@ def render(colors, df_hr):
         <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
             The efficiency metric (heart rate divided by pace) provides a single value that captures cardiovascular performance.
             Lower values indicate better efficiency—running at faster paces with lower heart rates. The chart shows the monthly
-            progression of this metric with a downward trend line, demonstrating consistent improvement over the training period.
+            progression of this metric, demonstrating consistent improvement over the training period.
         </p>
         <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
             From the start to end of this period, the efficiency metric improved by <strong>{eff_total_improvement:.1f}%</strong>.
@@ -573,7 +553,7 @@ def render(colors, df_hr):
                 border: 2px solid {colors[1]};'>
         <h4 style='color: {colors[1]}; margin-top: 0;'>Key Marathon HR Patterns</h4>
         <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
-            <strong>RVM 2024 (3:47:47):</strong> First marathon with structured HR monitoring. Average training HR in 2024
+            <strong>RVM 2024 (3:47:47):</strong> Average training HR in 2024
             was {avg_hr_2024:.0f} bpm at {avg_pace_2024_fmt} /km pace. Built initial aerobic base with mixed intensity training.
         </p>
         <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
@@ -746,28 +726,6 @@ def render(colors, df_hr):
                 2024: {avg_pace_2024_fmt} /km<br>
                 2025: {avg_pace_2025_fmt} /km<br>
                 Improvement: {pace_improvement_text} /km
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Trend Line Calculations
-        st.markdown(f"""
-        <h3 style='color: {colors[0]}; margin-top: 20px;'>4. Statistical Analysis</h3>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div style='background: rgba(0, 217, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;'>
-            <h4 style='color: {colors[1]}; font-size: 16px;'>Linear Regression Trend Line</h4>
-            <p style='color: {colors[4]}; font-family: monospace; font-size: 14px; margin: 10px 0;'>
-                For HR vs Pace relationship:<br>
-                y = mx + b<br>
-                where y = Heart Rate, x = Pace<br>
-                m = slope (HR change per unit pace change)<br>
-                b = y-intercept (baseline HR)
-            </p>
-            <p style='color: {colors[4]}; font-size: 13px; margin: 10px 0;'>
-                Calculated using numpy.polyfit with degree 1 (linear fit)<br>
-                Lower slope in 2025 indicates improved efficiency
             </p>
         </div>
         """, unsafe_allow_html=True)

@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 
 
 def render(colors):
-    # HERO HEADER - ENHANCED CINEMATIC DESIGN
+    # HERO HEADER - CINEMATIC DESIGN
     st.markdown(
     """
     <div style="
@@ -39,8 +39,18 @@ def render(colors):
         font-size: 1.4rem;
         line-height: 1.6;
     ">
-        A Data-Driven Journey from a Sub 5:00 to a Sub 3:30 Marathon
+        Data Analytics Case Study: Marathon Performance Optimization
     </h3>
+
+    <p style="
+        color: #94a3b8;
+        font-weight: 400;
+        margin: 20px 0 0 0;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+    ">
+        By Aditya Padmarajan
+    </p>
     </div>
     """,
     unsafe_allow_html=True
@@ -87,7 +97,7 @@ def render(colors):
             <h2 style='
                 color: #38bdf8;
                 margin: 0;
-                font-size: 3.2rem;
+                font-size: 2.2rem;
                 font-weight: 700;
                 line-height: 1;
                 text-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
@@ -124,7 +134,7 @@ def render(colors):
             <h2 style='
                 color: #b957ff;
                 margin: 0;
-                font-size: 3.2rem;
+                font-size: 2.2rem;
                 font-weight: 700;
                 line-height: 1;
                 text-shadow: 0 0 25px rgba(185, 87, 255, 0.7);
@@ -161,11 +171,11 @@ def render(colors):
             <h2 style='
                 color: #00ff9f;
                 margin: 0;
-                font-size: 3.2rem;
+                font-size: 2.2rem;
                 font-weight: 700;
                 line-height: 1;
                 text-shadow: 0 0 25px rgba(0, 255, 159, 0.7);
-            '>3400 +</h2>
+            '>3400+</h2>
             <p style='
                 color: #94a3b8;
                 margin: 12px 0 0 0;
@@ -198,7 +208,7 @@ def render(colors):
             <h2 style='
                 color: #51cf66;
                 margin: 0;
-                font-size: 3.2rem;
+                font-size: 2.2rem;
                 font-weight: 700;
                 line-height: 1;
                 text-shadow: 0 0 25px rgba(81, 207, 102, 0.7);
@@ -248,11 +258,9 @@ def render(colors):
         margin: 0 0 20px 0;
         text-align: justify;
     ">
-        This comprehensive data analytics project chronicles a remarkable transformation in marathon
-        performance, combining <span style='color: #38bdf8; font-weight: 600;'>endurance sports science</span>,
-        <span style='color: #b957ff; font-weight: 600;'>data visualization</span>, and
-        <span style='color: #00ff9f; font-weight: 600;'>performance analytics</span> to document the journey
-        from a recreational runner to a competitive marathoner.
+        This data analytics project visualizes <span style='color: #38bdf8; font-weight: 600;'>marathon performance data</span>
+        using <span style='color: #b957ff; font-weight: 600;'>interactive charts and graphs</span> to track
+        <span style='color: #00ff9f; font-weight: 600;'>training progression</span> across multiple years of running.
     </p>
 
     <p style="
@@ -262,10 +270,10 @@ def render(colors):
         margin: 0;
         text-align: justify;
     ">
-        The analysis leverages <span style='color: #38bdf8; font-weight: 600;'>347 GPS-tracked running activities</span>
-        spanning 3.5 years (2022–2025), examining the physiological, training, and performance adaptations that enabled an
-        <span style='color: #00ff9f; font-weight: 600;'>80-minute improvement</span> across
-        <span style='color: #b957ff; font-weight: 600;'>6 marathon races</span>.
+        The dataset includes <span style='color: #38bdf8; font-weight: 600;'>347 GPS-tracked running activities</span>
+        spanning 3.5 years (2022–2025), with heart rate data, training volume metrics, and results from
+        <span style='color: #b957ff; font-weight: 600;'>6 marathon races</span>. The visualizations track an
+        <span style='color: #00ff9f; font-weight: 600;'>80-minute improvement</span> from the first to most recent marathon.
     </p>
     </div>
     """,
@@ -301,8 +309,8 @@ def render(colors):
             padding: 28px;
             border-left: 5px solid #38bdf8;
             box-shadow: 0 6px 25px rgba(56, 189, 248, 0.2);
-            min-height: 450px;
-            max-height: 450px;
+            min-height: 500px;
+            max-height: 500px;
             overflow: hidden;
         ">
             <h3 style='
@@ -336,8 +344,8 @@ def render(colors):
             padding: 28px;
             border-left: 5px solid #b957ff;
             box-shadow: 0 6px 25px rgba(185, 87, 255, 0.2);
-            min-height: 450px;
-            max-height: 450px;
+            min-height: 500px;
+            max-height: 500px;
             overflow: hidden;
         ">
             <h3 style='
@@ -354,10 +362,10 @@ def render(colors):
                 margin: 0;
                 padding-left: 20px;
             '>
-                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Performance Metrics:</b> Race time, pace evolution</li>
-                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Training Volume:</b> Annual distance, frequency</li>
-                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Physiological Data:</b> Heart rate efficiency</li>
-                <li style='margin-bottom: 0;'><b style='color: #e0f2fe;'>Geospatial Analysis:</b> Route visualization</li>
+                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Performance Tracking:</b> Marathon times and pace across 6 races</li>
+                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Training Volume:</b> Distance totals and run frequency by year</li>
+                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Heart Rate Data:</b> Cardiovascular efficiency comparisons</li>
+                <li style='margin-bottom: 0;'><b style='color: #e0f2fe;'>Route Mapping:</b> GPS visualization of courses and routes</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -371,8 +379,8 @@ def render(colors):
             padding: 28px;
             border-left: 5px solid #00ff9f;
             box-shadow: 0 6px 25px rgba(0, 255, 159, 0.2);
-            min-height: 450px;
-            max-height: 450px;
+            min-height: 500px;
+            max-height: 500;
             overflow: hidden;
         ">
             <h3 style='
@@ -389,8 +397,8 @@ def render(colors):
                 margin: 0;
                 padding-left: 20px;
             '>
-                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Royal Victoria Marathon:</b> 4 finishes (2022, 2023, 2024, 2025)</li>
-                <li style='margin-bottom: 0;'><b style='color: #e0f2fe;'>BMO Vancouver Marathon:</b> 2 finishes (2023, 2025)</li>
+                <li style='margin-bottom: 10px;'><b style='color: #e0f2fe;'>Royal Victoria Marathon:</b> 4 data points (2022, 2023, 2024, 2025)</li>
+                <li style='margin-bottom: 0;'><b style='color: #e0f2fe;'>BMO Vancouver Marathon:</b> 2 data points (2023, 2025)</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
@@ -484,29 +492,29 @@ def render(colors):
 
         with col1:
             st.markdown("""
-            **Marathon Time Improvement**
-            - **First marathon (RVM 2022):** 4:46:07
+            **Marathon Time Reduction**
+            - **Baseline (RVM 2022):** 4:46:07
               *(6:47/km pace)*
-            - **Latest marathon (RVM 2025):** 3:26:00
+            - **Final observation (RVM 2025):** 3:26:00
               *(4:52/km pace)*
-            - **Total improvement:** 80 minutes
-              *(27.9% faster)*
+            - **Total reduction:** 80 minutes
+              *(27.9% decrease)*
             """)
 
         with col2:
             st.markdown("""
-            **Pace Evolution**
-            - Average pace improved from **6:30/km to 4:50/km**
-            - Consistent **sub-5:00/km** pacing achieved by 2024
-            - **Negative splits** mastered in final races
+            **Pace Trends**
+            - Average pace decreased from **6:30/km to 4:50/km**
+            - Consistent **sub-5:00/km** pacing observed from 2024
+            - Progressive **pace distribution improvement** in later races
             """)
 
         with col3:
             st.markdown("""
-            **Training Volume Progression**
-            - **2022:** Lower baseline volume (building phase)
-            - **2023:** Volume increase with consistency focus
-            - **2024-2025:** Peak training years with **1000+ km annually**
+            **Training Volume Trends**
+            - **2022:** Baseline volume establishment
+            - **2023:** Volume increased with frequency stabilization
+            - **2024-2025:** Maximum observed volume at **1000+ km annually**
             """)
 
         st.markdown("</div>", unsafe_allow_html=True)
@@ -517,26 +525,26 @@ def render(colors):
 
         with col1:
             st.markdown("""
-            **Aerobic Efficiency Gains**
-            - Heart rate efficiency **improved year-over-year**
-            - Same pace achieved at **lower heart rates** over time
-            - Enhanced **lactate threshold and VO2max** indicators
+            **Cardiovascular Efficiency**
+            - Heart rate decreased at equivalent paces **year-over-year**
+            - Faster running achieved at **lower heart rates** in 2025
+            - Efficiency metric improved by **double digits** between years
             """)
 
         with col2:
             st.markdown("""
-            **Training Consistency**
-            - **347 runs** completed over 3.5 years
-            - Average of **99 runs per year**
-            - Maintained **injury-free progression** through smart periodization
+            **Training Consistency Patterns**
+            - **347 activities** recorded over 3.5-year period
+            - Average frequency: **99 runs per year**
+            - Data shows **continuous progression** with structured periodization
             """)
 
         with col3:
             st.markdown("""
-            **Race-Specific Preparation**
-            - **Course familiarity** advantage at RVM (4 races)
-            - Consistent improvement at same venue demonstrates **adaptation**
-            - **Strategic race selection** for optimal progression
+            **Race Data Characteristics**
+            - **Controlled variable**: 4 races at identical RVM course
+            - Performance trends at repeated venue isolate **training effects**
+            - Race selection provides **comparable datasets** for analysis
             """)
 
         st.markdown("</div>", unsafe_allow_html=True)
@@ -549,27 +557,27 @@ def render(colors):
             st.markdown("""
             **Aerobic Base Development**
 
-            The foundation of marathon performance lies in building aerobic capacity through consistent, moderate-intensity training.
-            The heart rate analysis reveals progressive improvements in aerobic efficiency—maintaining faster paces at lower heart rates
-            over successive years.
+            Marathon performance optimization requires aerobic capacity development through consistent moderate-intensity training.
+            Heart rate analysis reveals correlations between training volume and aerobic efficiency—the data shows faster paces
+            achieved at lower heart rates across successive training cycles.
 
-            **Progressive Overload**
+            **Progressive Overload Application**
 
-            Annual training volume increased systematically, allowing for physiological adaptations while minimizing injury risk.
-            The progression from recreational to competitive performance exemplifies proper application of progressive overload principles.
+            Annual training volume demonstrates systematic increases, supporting gradual physiological adaptation. The observed
+            performance trajectory illustrates the principle of progressive overload applied over a multi-year timeframe.
             """)
 
         with col2:
             st.markdown("""
-            **Specificity & Course Familiarity**
+            **Experimental Control & Course Specificity**
 
-            Multiple races on the same course (Royal Victoria Marathon) provided controlled conditions to measure true performance gains,
-            eliminating course difficulty as a confounding variable.
+            Repeated measurements at the same venue (Royal Victoria Marathon) provide controlled conditions for longitudinal analysis,
+            reducing course variability as a confounding factor in performance comparisons.
 
-            **Data-Driven Training**
+            **Data Collection & Visualization**
 
-            Leveraging GPS tracking, heart rate monitoring, and performance analytics enabled evidence-based training decisions,
-            optimizing the progression toward the sub-3:30 goal.
+            GPS tracking, heart rate monitoring, and performance metrics captured from each activity provide the foundation for analysis.
+            The dashboard uses interactive charts to visualize training volume, race performance, and cardiovascular trends over time.
             """)
 
         st.markdown("</div>", unsafe_allow_html=True)
@@ -622,7 +630,7 @@ def render(colors):
             line-height: 1.7;
             margin: 0;
         '>
-        Track race-by-race improvements, pace evolution curves, and competitive performance metrics across all 6 marathons.
+        View race times, pace progression, and VO2 Max trends across 6 marathon events from 2022 to 2025.
         </p>
         </div>
         """, unsafe_allow_html=True)
@@ -652,7 +660,7 @@ def render(colors):
             line-height: 1.7;
             margin: 0;
         '>
-        Explore annual training volume, consistency patterns, and how progressive overload was applied year-over-year.
+        Track annual distance totals, weekly run frequency, and year-over-year training volume growth patterns.
         </p>
         </div>
         """, unsafe_allow_html=True)
@@ -682,7 +690,7 @@ def render(colors):
             line-height: 1.7;
             margin: 0;
         '>
-        Analyze aerobic efficiency improvements through pace-HR relationships and cardiovascular adaptations over time.
+        Compare heart rate vs pace between 2024 and 2025, showing cardiovascular efficiency improvements over time.
         </p>
         </div>
         """, unsafe_allow_html=True)
@@ -712,7 +720,7 @@ def render(colors):
             line-height: 1.7;
             margin: 0;
         '>
-        Interactive GPS route maps of marathon courses, showcasing the terrain and race-day execution.
+        View GPS maps of marathon courses and training routes across Victoria and Vancouver, BC.
         </p>
         </div>
         """, unsafe_allow_html=True)
@@ -752,8 +760,8 @@ def render(colors):
             max-width: 750px;
             margin: 0 auto;
         '>
-        Use the navigation menu on the left to dive into detailed performance metrics, training analysis,
-        heart rate efficiency trends, and interactive route visualizations.
+        Use the sidebar menu to navigate between pages and explore interactive charts tracking marathon performance,
+        training volume, heart rate efficiency, and route maps.
         </p>
     </div>
     """, unsafe_allow_html=True)

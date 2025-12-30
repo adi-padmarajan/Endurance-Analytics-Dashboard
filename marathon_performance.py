@@ -695,6 +695,80 @@ def render(colors, vo2max_df):
     </div>
     """, unsafe_allow_html=True)
 
+    # VISUALIZATION 6: VO2 MAX PROGRESSION (2025)
+    st.markdown("### VO₂ Max Progression (2025)")
+    st.markdown("*Estimated aerobic capacity throughout the 2025 training cycle*")
+
+    # Filter VO2 Max data for 2025 running activities
+    vo2_2025 = vo2max_df[vo2max_df['Activity Type'] == 'running'].copy()
+
+    # Create VO2 Max line chart
+    fig_vo2 = go.Figure()
+
+    fig_vo2.add_trace(go.Scatter(
+        x=vo2_2025['Month'],
+        y=vo2_2025['VO2 Max'],
+        mode='lines+markers',
+        marker=dict(size=12, color='#00ff9f', line=dict(color=colors[4], width=2)),
+        line=dict(width=4, color='#00ff9f', shape='spline'),
+        fill='tozeroy',
+        fillcolor='rgba(0, 255, 159, 0.1)',
+        hovertemplate="<b>%{x}</b><br>VO₂ Max: %{y:.1f} ml/kg/min<extra></extra>"
+    ))
+
+    fig_vo2.update_layout(
+        height=450,
+        plot_bgcolor="black",
+        paper_bgcolor="black",
+        font=dict(family='Arial', color=colors[0]),
+        xaxis=dict(
+            title=dict(text="Month (2025)", font=dict(size=14, color=colors[0])),
+            tickfont=dict(size=12, color=colors[4]),
+            showgrid=True,
+            gridcolor='rgba(0, 217, 255, 0.15)'
+        ),
+        yaxis=dict(
+            title=dict(text="VO₂ Max (ml/kg/min)", font=dict(size=14, color=colors[0])),
+            tickfont=dict(size=12, color=colors[4]),
+            showgrid=True,
+            gridcolor='rgba(0, 217, 255, 0.15)',
+            range=[50, 66]
+        ),
+        hovermode='x unified',
+        hoverlabel=dict(bgcolor="#0d1f26", font_size=13, bordercolor='#00ff9f', font_color=colors[4]),
+        margin=dict(l=70, r=30, t=30, b=60),
+        showlegend=False
+    )
+
+    st.plotly_chart(fig_vo2, use_container_width=True)
+
+    # Calculate VO2 Max improvement
+    vo2_start = vo2_2025['VO2 Max'].iloc[0]
+    vo2_peak = vo2_2025['VO2 Max'].max()
+    vo2_current = vo2_2025['VO2 Max'].iloc[-1]
+    vo2_improvement = vo2_peak - vo2_start
+
+    st.markdown(f"""
+    <div style='background: linear-gradient(135deg, #0d1f26 0%, #1a0d2e 100%);
+                padding: 20px;
+                border-radius: 10px;
+                border-left: 4px solid #00ff9f;
+                margin: 20px 0;'>
+        <h4 style='color: #00ff9f; margin-top: 0; font-size: 15px;'>Analysis: Aerobic Capacity Development</h4>
+        <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
+            VO₂ Max estimates from Strava show aerobic capacity development throughout the 2025 season. Starting at
+            <strong>{vo2_start:.1f} ml/kg/min</strong> in June, the metric peaked at <strong>{vo2_peak:.1f} ml/kg/min</strong>
+            in July, representing a <strong>{vo2_improvement:.1f} ml/kg/min improvement</strong>. The current value of
+            <strong>{vo2_current:.1f} ml/kg/min</strong> in October reflects the trained state heading into the RVM 2025 marathon.
+        </p>
+        <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
+            The sharp increase from June to July correlates with increased training volume and intensity during the marathon
+            build-up phase. The slight decline from peak to race day is typical as training tapers before the event, prioritizing
+            recovery over maximum aerobic stimulus. These VO₂ Max values are estimates based on GPS and heart rate data.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
 
     # KEY INSIGHTS SECTION - Data-Driven Takeaways
     st.markdown("### Key Performance Insights")

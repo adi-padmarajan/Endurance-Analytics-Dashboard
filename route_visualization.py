@@ -9,6 +9,29 @@ def render(colors):
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
+    # Running Routes Collage - 20 Routes Combined
+    st.markdown("### Training Routes Collage")
+    st.markdown("*20 Running Routes Combined - Victoria & Vancouver, BC*")
+
+    try:
+        trackpoints_collage = parse_activity_file("GOTOES_2880330584911107.gpx")
+        if trackpoints_collage:
+            # Create DataFrame for st.map
+            df_collage = pd.DataFrame(
+                [(lat, lon) for lat, lon, _, _ in trackpoints_collage],
+                columns=['lat', 'lon']
+            )
+
+            # Display the map with purple/magenta color to match the theme
+            st.map(df_collage, color='#b957ff', size=20, zoom=11, use_container_width=True)
+        else:
+            st.error("Could not load running routes collage")
+    except Exception as e:
+        st.error(f"Error loading running routes collage: {e}")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+
     # BMO 2025 Map
     st.markdown("### BMO Vancouver Marathon")
 

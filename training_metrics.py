@@ -403,12 +403,12 @@ def render(colors, activities_df):
  
     st.markdown("---")
     st.markdown("## Royal Victoria Marathon 2025 - Sub 3:30 PR Prep Analysis")
-    st.markdown("*July - October 2025: A Deep Dive into the Training Block*")
+    st.markdown("*16-Week Training Block: A Deep Dive into Race Preparation*")
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Filter RVM 2025 prep data (July 1 - Oct 12, 2025)
-    rvm_2025_start = pd.to_datetime('2025-07-01')
+    # Filter RVM 2025 prep data (16 weeks before race day: Oct 12, 2025)
     rvm_2025_end = pd.to_datetime('2025-10-12')  # Race day
+    rvm_2025_start = rvm_2025_end - pd.Timedelta(weeks=16)  # 16 weeks back
     rvm_2025_data = yearly_data[(yearly_data['Activity Date'] >= rvm_2025_start) &
                                  (yearly_data['Activity Date'] <= rvm_2025_end)].copy()
 
@@ -418,7 +418,7 @@ def render(colors, activities_df):
         rvm_2025_total_runs = len(rvm_2025_data)
         rvm_2025_avg_distance = rvm_2025_data['Distance'].mean()
         rvm_2025_longest_run = rvm_2025_data['Distance'].max()
-        rvm_2025_weeks = (rvm_2025_end - rvm_2025_start).days / 7
+        rvm_2025_weeks = 16  # Exactly 16 weeks
         rvm_2025_avg_weekly = rvm_2025_total_distance / rvm_2025_weeks
 
         # Categorize workouts based on activity names and descriptions
@@ -700,6 +700,22 @@ def render(colors, activities_df):
             </p>
         </div>
         """, unsafe_allow_html=True)
+    else:
+        # Display message when no RVM 2025 data exists
+        st.markdown(f"""
+        <div style='background: linear-gradient(135deg, #0d1f26 0%, #1a0d2e 100%);
+                    padding: 30px;
+                    border-radius: 10px;
+                    border-left: 4px solid {colors[1]};
+                    margin: 20px 0;
+                    text-align: center;'>
+            <h4 style='color: {colors[1]}; margin-top: 0; font-size: 16px;'>No Training Data Available</h4>
+            <p style='color: {colors[4]}; line-height: 1.8; font-size: 14px; margin: 10px 0;'>
+                No running data found for the RVM 2025 prep period ({rvm_2025_start.strftime('%b %d, %Y')} - {rvm_2025_end.strftime('%b %d, %Y')}).
+                This section will populate once training activities are logged for this time period.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
     # FORMULAS AND CALCULATIONS SECTION
     st.markdown("---")
@@ -707,12 +723,6 @@ def render(colors, activities_df):
     st.markdown("*Mathematical formulas used in Training Metrics Analysis*")
 
     with st.expander("**View All Formulas Used in Calculations**", expanded=False):
-        st.markdown(f"""
-        <div style='background: linear-gradient(135deg, #0a0420 0%, #1a0d2e 100%);
-                    padding: 25px;
-                    border-radius: 10px;
-                    border: 2px solid {colors[0]};'>
-        """, unsafe_allow_html=True)
 
         # Core Training Metrics
         st.markdown(f"""
@@ -854,13 +864,13 @@ def render(colors, activities_df):
             <div style='background: rgba(0, 217, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;'>
                 <h4 style='color: {colors[1]}; font-size: 16px;'>Average Weekly Distance</h4>
                 <p style='color: {colors[4]}; font-family: monospace; font-size: 14px; margin: 10px 0;'>
-                    Prep Duration (weeks) = (End Date - Start Date) / 7<br>
-                    = (Oct 12, 2025 - Jul 1, 2025) / 7<br>
-                    = {rvm_2025_weeks:.2f} weeks
+                    Prep Duration = 16 weeks (calculated as 16 weeks before race day)<br>
+                    Start Date = Oct 12, 2025 - 16 weeks = {rvm_2025_start.strftime('%b %d, %Y')}<br>
+                    End Date = {rvm_2025_end.strftime('%b %d, %Y')} (Race Day)
                 </p>
                 <p style='color: {colors[4]}; font-family: monospace; font-size: 14px; margin: 10px 0;'>
                     Avg Weekly = Total Distance / Duration in Weeks<br>
-                    = {rvm_2025_total_distance:.0f} km / {rvm_2025_weeks:.2f}<br>
+                    = {rvm_2025_total_distance:.0f} km / {rvm_2025_weeks}<br>
                     = {rvm_2025_avg_weekly:.2f} km/week
                 </p>
             </div>

@@ -7,6 +7,8 @@ import marathon_performance
 import training_metrics
 import heart_rate_analysis
 import route_visualization
+import background
+import contact
 
 # Page configuration for a wide layout
 st.set_page_config(
@@ -207,7 +209,7 @@ with st.sidebar:
     # Navigation Menu
     page = st.radio(
         "Navigation",
-        ["Home", "Marathon Performance Metrics", "Training Metrics", "Heart Rate Analysis","Route Visualization"],
+        ["Home", "Project Background", "Race Performance Analytics", "Training Volume Analysis", "Cardiovascular Efficiency", "Geospatial Visualization", "Contact"],
         label_visibility="collapsed"
     )
 
@@ -234,21 +236,27 @@ df_hr['Year'] = df_hr['Activity Date'].dt.year
 df_hr['Pace (min/km)'] = 1000 / (df_hr['Average Speed'] * 60)
 df_hr = df_hr.rename(columns={'Average Heart Rate': 'Avg HR (bpm)'})
 
-# PAGE ROUTING 
+# PAGE ROUTING
 if page == "Home":
     home.render(colors)
 
-elif page == "Marathon Performance Metrics":
+elif page == "Project Background":
+    background.render(colors)
+
+elif page == "Race Performance Analytics":
     marathon_performance.render(colors, vo2max_df)
 
-elif page == "Training Metrics":
+elif page == "Training Volume Analysis":
     training_metrics.render(colors, activities_df)
 
-elif page == "Heart Rate Analysis":
+elif page == "Cardiovascular Efficiency":
     heart_rate_analysis.render(colors, df_hr)
 
-elif page == "Route Visualization":
+elif page == "Geospatial Visualization":
     route_visualization.render(colors)
+
+elif page == "Contact":
+    contact.render(colors)
 
 
 
@@ -261,59 +269,13 @@ st.markdown(
     <div style='text-align: center; padding: 2rem 0 1rem 0;'>
         <div style='color: {colors[4]}; font-size: 0.9rem; line-height: 1.8; text-shadow: 0 0 8px {colors[4]}30;'>
             <p style='margin: 0.5rem 0;'>
-                Built with passion by <strong style='color: {colors[0]}; text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);'>Aditya Padmarajan</strong>
+                Built by <strong style='color: {colors[0]}; text-shadow: 0 0 10px rgba(0, 217, 255, 0.3);'>Aditya Padmarajan</strong>
             </p>
             <p style='margin: 0.5rem 0; font-size: 0.8rem; opacity: 0.8;'>
                 Data sourced from Strava • 2022-2025
             </p>
-            <p style='margin: 1rem 0 0 0; font-size: 0.75rem; opacity: 0.6;'>
-                "The difference between the impossible and the possible lies in a person's determination." — Tommy Lasorda
-            </p>
         </div>
     </div>
-
-    <!-- Back to Top Button -->
-    <div id="backToTop" style='
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: linear-gradient(135deg, {colors[0]} 0%, {colors[1]} 100%);
-        color: {colors[3]};
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0, 217, 255, 0.4);
-        transition: all 0.3s ease;
-        z-index: 1000;
-        font-size: 20px;
-        font-weight: bold;
-    ' onclick='window.scrollTo({{top: 0, behavior: "smooth"}})'
-       onmouseover='this.style.transform="scale(1.1)"; this.style.boxShadow="0 6px 20px rgba(0, 217, 255, 0.6)"'
-       onmouseout='this.style.transform="scale(1)"; this.style.boxShadow="0 4px 12px rgba(0, 217, 255, 0.4)"'>
-        ↑
-    </div>
-
-    <script>
-    // Show/hide back to top button based on scroll position
-    window.onscroll = function() {{
-        var backToTop = document.getElementById("backToTop");
-        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {{
-            backToTop.style.opacity = "1";
-            backToTop.style.pointerEvents = "auto";
-        }} else {{
-            backToTop.style.opacity = "0";
-            backToTop.style.pointerEvents = "none";
-        }}
-    }};
-
-    // Initial state
-    document.getElementById("backToTop").style.opacity = "0";
-    document.getElementById("backToTop").style.pointerEvents = "none";
-    </script>
     """,
     unsafe_allow_html=True
 )
