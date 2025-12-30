@@ -348,16 +348,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 <div align="center">
 
-**Built with ❤️ by Aditya Padmarajan**
+**Built by Aditya Padmarajan**
 
 ⭐ Star this repo if you found it helpful!
 
-[View Live Demo](#) | [Report Bug](#) | [Request Feature](#)
+
 
 </div>
 
 ---
 
-**Last Updated**: December 30, 2025
-**Version**: 1.0.0
-**Status**: ✅ Production Ready
