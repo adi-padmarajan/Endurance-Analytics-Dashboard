@@ -1,6 +1,6 @@
 # 🏃‍♂️ Endurance Analytics Dashboard
 
-Link: https://marathonsdashboard.streamlit.app/
+Link: https://marathonsdashboard-adityapadmarajan.streamlit.app/
 
 ![Python](https://img.shields.io/badge/Python-3.13-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.52.2-red.svg)
