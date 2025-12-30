@@ -5,7 +5,6 @@ Link: https://marathonsdashboard.streamlit.app/
 ![Python](https://img.shields.io/badge/Python-3.13-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.52.2-red.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)
 
 An interactive data visualization dashboard tracking marathon performance improvement from 4:46:07 to 3:26:00 over three years through data-driven training optimization.
 

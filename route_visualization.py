@@ -18,7 +18,7 @@ def render(colors):
 
     # Running Routes Collage - 20 Routes Combined
     st.markdown("### Training Routes Collage")
-    st.markdown("*20 Running Routes Combined - Victoria & Vancouver, BC*")
+    st.markdown("*20 Running Routes Combined - Victoria, BC*")
 
     collage_file = "GOTOES_2880330584911107.gpx"
 
