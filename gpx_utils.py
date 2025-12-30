@@ -8,6 +8,11 @@ import xml.etree.ElementTree as ET
 from typing import List, Tuple, Optional
 import numpy as np
 from fitparse import FitFile
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def parse_gpx_file(filepath: str) -> List[Tuple[float, float, Optional[float], Optional[int]]]:
@@ -40,7 +45,7 @@ def parse_gpx_file(filepath: str) -> List[Tuple[float, float, Optional[float], O
 
         return trackpoints
     except Exception as e:
-        print(f"Error parsing GPX file {filepath}: {e}")
+        logger.error(f"Error parsing GPX file {filepath}: {e}")
         return []
 
 
@@ -88,7 +93,7 @@ def parse_tcx_file(filepath: str) -> List[Tuple[float, float, Optional[float], O
 
         return trackpoints
     except Exception as e:
-        print(f"Error parsing TCX file {filepath}: {e}")
+        logger.error(f"Error parsing TCX file {filepath}: {e}")
         return []
 
 
@@ -147,7 +152,7 @@ def parse_fit_file(filepath: str) -> List[Tuple[float, float, Optional[float], O
 
         return trackpoints
     except Exception as e:
-        print(f"Error parsing FIT file {filepath}: {e}")
+        logger.error(f"Error parsing FIT file {filepath}: {e}")
         return []
 
 
@@ -165,7 +170,7 @@ def parse_activity_file(filepath: str) -> List[Tuple[float, float, Optional[floa
     elif 'fit' in filepath.lower():
         return parse_fit_file(filepath)
     else:
-        print(f"Unknown file format: {filepath}")
+        logger.warning(f"Unknown file format: {filepath}")
         return []
 
 

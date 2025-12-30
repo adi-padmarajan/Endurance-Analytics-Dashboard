@@ -6,6 +6,13 @@ import numpy as np
 
 
 def render(colors, activities_df):
+    """
+    Render the Training Metrics Analysis page with volume and consistency data.
+
+    Args:
+        colors (list): Theme color palette [cyan, purple, violet, abyss, ice-blue]
+        activities_df (pd.DataFrame): Activities data with training metrics
+    """
     st.title("Training Metrics Analysis")
     st.markdown("*Building the foundation through consistent volume and smart progression*")
 

@@ -2,6 +2,12 @@ import streamlit as st
 
 
 def render(colors):
+    """
+    Render the Contact page with social media links and contact information.
+
+    Args:
+        colors (list): Theme color palette [cyan, purple, violet, abyss, ice-blue]
+    """
     # PAGE HEADER
     st.markdown(
         f"""

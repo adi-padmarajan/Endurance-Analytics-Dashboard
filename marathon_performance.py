@@ -5,6 +5,13 @@ import numpy as np
 
 
 def render(colors, vo2max_df):
+    """
+    Render the Marathon Performance Analytics page with race data and visualizations.
+
+    Args:
+        colors (list): Theme color palette [cyan, purple, violet, abyss, ice-blue]
+        vo2max_df (pd.DataFrame): VO2 Max data with columns ['Month', 'Activity Type', 'VO2 Max']
+    """
     st.title("Marathon Performance Analytics")
     st.markdown("*Visualizing 3 years of improvement across 6 marathon races*")
 

@@ -2,6 +2,12 @@ import streamlit as st
 
 
 def render(colors):
+    """
+    Render the Project Background page with methodology and training philosophy.
+
+    Args:
+        colors (list): Theme color palette [cyan, purple, violet, abyss, ice-blue]
+    """
     # PAGE HEADER
     st.markdown(
         f"""

@@ -3,6 +3,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
 
+# Constants for heart rate zone calculations
+MAX_HEART_RATE = 196  # User's maximum heart rate (bpm)
+ZONE2_LOWER_PCT = 0.60  # Zone 2 lower bound (60% of max HR)
+ZONE2_UPPER_PCT = 0.70  # Zone 2 upper bound (70% of max HR)
+
 
 def format_pace(pace_decimal):
     """Convert decimal pace (e.g., 5.5 min/km) to mm:ss format"""
@@ -14,6 +19,13 @@ def format_pace(pace_decimal):
 
 
 def render(colors, df_hr):
+    """
+    Render the Heart Rate Efficiency Analysis page with cardiovascular metrics.
+
+    Args:
+        colors (list): Theme color palette [cyan, purple, violet, abyss, ice-blue]
+        df_hr (pd.DataFrame): Heart rate data with columns ['Year', 'Avg HR (bpm)', 'Pace (min/km)', 'Activity Date']
+    """
     st.title("Heart Rate Efficiency Analysis")
     st.markdown("*Cardiovascular adaptation and aerobic development through Zone 2 training*")
 
@@ -58,9 +70,8 @@ def render(colors, df_hr):
     efficiency_improvement = ((hr_efficiency_2024 - hr_efficiency_2025) / hr_efficiency_2024) * 100 if hr_efficiency_2024 > 0 else 0
 
     # Calculate Zone 2 percentages (60-70% of max HR)
-    max_hr = 190  # Consistent max HR across all calculations
-    zone2_lower = 0.60 * max_hr  # 114 bpm
-    zone2_upper = 0.70 * max_hr  # 133 bpm
+    zone2_lower = ZONE2_LOWER_PCT * MAX_HEART_RATE  # 118 bpm (60% of 196)
+    zone2_upper = ZONE2_UPPER_PCT * MAX_HEART_RATE  # 137 bpm (70% of 196)
 
     zone2_runs_2024 = len(df_2024[(df_2024['Avg HR (bpm)'] >= zone2_lower) & (df_2024['Avg HR (bpm)'] <= zone2_upper)])
     zone2_pct_2024 = (zone2_runs_2024 / len(df_2024) * 100) if len(df_2024) > 0 else 0
@@ -230,7 +241,7 @@ def render(colors, df_hr):
     st.markdown("*Increased Zone 2 focus in 2025 built superior aerobic foundation*")
 
     # Define HR zones
-    def categorize_hr_zone(avg_hr, max_hr=190):
+    def categorize_hr_zone(avg_hr, max_hr=MAX_HEART_RATE):
         percentage = (avg_hr / max_hr) * 100
         if percentage < 60:
             return 'Recovery (< 60%)'
@@ -671,13 +682,13 @@ def render(colors, df_hr):
 
         st.markdown(f"""
         <div style='background: rgba(0, 217, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px;'>
-            <h4 style='color: {colors[1]}; font-size: 16px;'>Zone Classification (Max HR = 190 bpm)</h4>
+            <h4 style='color: {colors[1]}; font-size: 16px;'>Zone Classification (Max HR = {MAX_HEART_RATE} bpm)</h4>
             <p style='color: {colors[4]}; font-family: monospace; font-size: 14px; margin: 10px 0;'>
-                Recovery Zone: HR < 60% of max = < 114 bpm<br>
-                Zone 2 (Aerobic): 60-70% of max = 114-133 bpm<br>
-                Moderate Zone: 70-80% of max = 133-152 bpm<br>
-                Threshold Zone: 80-90% of max = 152-171 bpm<br>
-                Maximum Zone: HR > 90% of max = > 171 bpm
+                Recovery Zone: HR < 60% of max = < {int(0.60 * MAX_HEART_RATE)} bpm<br>
+                Zone 2 (Aerobic): 60-70% of max = {int(0.60 * MAX_HEART_RATE)}-{int(0.70 * MAX_HEART_RATE)} bpm<br>
+                Moderate Zone: 70-80% of max = {int(0.70 * MAX_HEART_RATE)}-{int(0.80 * MAX_HEART_RATE)} bpm<br>
+                Threshold Zone: 80-90% of max = {int(0.80 * MAX_HEART_RATE)}-{int(0.90 * MAX_HEART_RATE)} bpm<br>
+                Maximum Zone: HR > 90% of max = > {int(0.90 * MAX_HEART_RATE)} bpm
             </p>
         </div>
         """, unsafe_allow_html=True)

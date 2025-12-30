@@ -3,6 +3,12 @@ import plotly.graph_objects as go
 
 
 def render(colors):
+    """
+    Render the Home page with project overview, key metrics, and navigation.
+
+    Args:
+        colors (list): Theme color palette [cyan, purple, violet, abyss, ice-blue]
+    """
     # HERO HEADER - CINEMATIC DESIGN
     st.markdown(
     """
