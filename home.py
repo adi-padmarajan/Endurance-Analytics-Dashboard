@@ -480,15 +480,6 @@ def render(colors):
 
     # Performance Adaptations Expander
     with st.expander("Performance Adaptations - Marathon Time, Pace Evolution & Training Volume", expanded=False):
-        st.markdown("""
-        <div style="
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.7), rgba(2, 6, 23, 0.8));
-            border-radius: 14px;
-            padding: 24px;
-            border-left: 4px solid #38bdf8;
-        ">
-        """, unsafe_allow_html=True)
-
         col1, col2, col3 = st.columns(3)
 
         with col1:
@@ -522,15 +513,6 @@ def render(colors):
 
     # Physiological Adaptations Expander
     with st.expander("Physiological Adaptations - Aerobic Efficiency, Consistency & Race Preparation", expanded=False):
-        st.markdown("""
-        <div style="
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.7), rgba(2, 6, 23, 0.8));
-            border-radius: 14px;
-            padding: 24px;
-            border-left: 4px solid #b957ff;
-        ">
-        """, unsafe_allow_html=True)
-
         col1, col2, col3 = st.columns(3)
 
         with col1:
@@ -561,18 +543,6 @@ def render(colors):
 
     # SCIENTIFIC CONTEXT EXPANDER
     with st.expander("Scientific Context & Training Principles - Exercise Physiology Fundamentals", expanded=False):
-        st.markdown("""
-        <div style="
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.7), rgba(2, 6, 23, 0.8));
-            border-radius: 14px;
-            padding: 28px;
-            border-left: 4px solid #00ff9f;
-        ">
-        <p style='color: #cbd5e1; font-size: 15.5px; line-height: 1.9; margin-bottom: 24px;'>
-        This project demonstrates several well-established principles from exercise physiology and endurance training:
-        </p>
-        """, unsafe_allow_html=True)
-
         col1, col2 = st.columns(2)
 
         with col1:
@@ -634,8 +604,8 @@ def render(colors):
             border-left: 5px solid #38bdf8;
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(56, 189, 248, 0.25);
-            min-height: 275px;
-            max-height: 275px;
+            min-height: 300px;
+            max-height: 300px;
             overflow: hidden;
             transition: transform 0.3s ease;
         '>
@@ -665,8 +635,8 @@ def render(colors):
             border-left: 5px solid #b957ff;
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(185, 87, 255, 0.25);
-            min-height: 275px;
-            max-height: 275px;
+            min-height: 300px;
+            max-height: 300px;
             overflow: hidden;
         '>
         <h3 style='
@@ -695,8 +665,8 @@ def render(colors):
             border-left: 5px solid #00ff9f;
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(0, 255, 159, 0.25);
-            min-height: 275px;
-            max-height: 275px;
+            min-height: 300px;
+            max-height: 300px;
             overflow: hidden;
         '>
         <h3 style='
@@ -725,8 +695,8 @@ def render(colors):
             border-left: 5px solid #51cf66;
             border-radius: 16px;
             box-shadow: 0 6px 25px rgba(81, 207, 102, 0.25);
-            min-height: 275px;
-            max-height: 275px;
+            min-height: 300px;
+            max-height: 300px;
             overflow: hidden;
         '>
         <h3 style='
